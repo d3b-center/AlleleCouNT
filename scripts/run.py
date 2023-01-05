@@ -1,6 +1,4 @@
 import argparse
-import gzip
-import re
 import subprocess
 import pandas as pd
 import pysam
@@ -26,8 +24,8 @@ parser.add_argument("-o", "--output", help = "Output file name in tsv format")
 # Read arguments from command line
 args = parser.parse_args()
 
-def get_VAF_pos(cram_path, chrom, pos, alt, reference=None):
-    """ Get RMS mapping quality and number of MAPQ=0 reads at locus
+def get_VAF_pos(cram_path, chrom, pos,ref, alt, reference=None):
+    """ Return VAF at a pos for an alt
         Args:
             cram_path (str): path to CRAM or BAM file
             chrom (str): locus chromosome name
@@ -40,6 +38,8 @@ def get_VAF_pos(cram_path, chrom, pos, alt, reference=None):
         Return:
             VAF for required Allele at the position given
     """
+    if len(ref) >1 or len(alt) >1 : # excluding indels
+        return("Indels are ignored at the moment")
     if cram_path.endswith('cram'):
         if not reference:
             raise IOError('Must provide reference with CRAM')
@@ -67,23 +67,38 @@ def get_VAF_pos(cram_path, chrom, pos, alt, reference=None):
     else:          
         return(round(count_required/total_reads,4))
 
-gene=object.read_gzip_file(args.Input)
+#extract gene list from vcf file
+gene=object.read_gzip_file(args.Input) 
 del gene[-1]
+
+#read tsv file from bcftools 
 df = pd.read_csv(args.tsv,sep = '\t')
-#df = pd.read_csv('tmp_file.tsv',sep = '\t')
+
+#set up pandas dataframe
 df.columns=["popmax","chr", "start", "stop", "ref","alt", "ref,alt depth", "Total depth", "VAF"]
 df['gene']= gene
 df = df[["gene","popmax","chr", "start", "stop", "ref","alt", "ref,alt depth", "Total depth", "VAF"]]
+
+#remove entries with . as popmax
 df=df[df.popmax != "."]
 df['popmax'] = df['popmax'].astype(float)
+
+#set criteria for rare variant
 df=df[df.popmax < 0.01]
 df=df.drop(['popmax'], axis=1)
 
 list_VAF=[]
+
+#run the for loop to calculate lost VAF
 for index, row in df.iterrows():
     #print(row['chr'], row['start'])
-    list_VAF.append(get_VAF_pos(args.cram,row['chr'],row['start'],row['alt'],args.ref))
+    list_VAF.append(get_VAF_pos(args.cram,row['chr'],row['start'],row['ref'],row['alt'],args.ref))
 df["Lost_VAF"]=list_VAF
 df["BS_ID"]=args.Sample
+
+#reorder the columns
 df = df[["BS_ID","gene","chr", "start", "stop", "ref","alt", "ref,alt depth", "Total depth", "VAF","Lost_VAF"]]
-df.to_csv(args.output, sep="\t",index=False)
+
+#output_file in tsv format
+output_file_name=(args.output)+".tsv"
+df.to_csv(output_file_name, sep="\t",index=False)

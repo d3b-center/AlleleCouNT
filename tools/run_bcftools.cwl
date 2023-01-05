@@ -4,8 +4,7 @@ cwlVersion: v1.2
 requirements:
   - class: ShellCommandRequirement
   - class: DockerRequirement
-    dockerPull: "bcftools:latest"
-    #dockerPull: "pgc-images.sbgenomics.com/d3b-bixu/toolkit_subtyping:pyreader0.4.4"
+    dockerPull: "pgc-images.sbgenomics.com/d3b-bixu/loh:1.0.0"
   - class: ResourceRequirement
     coresMin: 1
     ramMin: 4096
@@ -34,7 +33,7 @@ inputs:
 
 outputs:
   tmp_file:
-    type: File
+    type: 'File?'
     outputBinding:
        glob: tmp_file.tsv  
     doc: "Extract variant info using bcftool in tsv format"

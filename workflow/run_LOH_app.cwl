@@ -3,24 +3,17 @@ class: Workflow
 id: LOH
 
 requirements:
-- class: ScatterFeatureRequirement
-- class: MultipleInputFeatureRequirement
 - class: StepInputExpressionRequirement
-- class: SubworkflowFeatureRequirement
-- class: InlineJavascriptRequirement
 
 inputs:
-  sample_vcf_file: {type: 'File', doc: "Input histology file"}
-  BS_ID: {type: string, doc: "C"}
-  output: {type: string, doc: "C"}
-  vcf: {type: 'File', doc: "Input histology file"}
- # tsv_file: {type: 'File', doc: "Input histology file"}
+  sample_vcf_file: {type: 'File', doc: "Input variant calling file for the sample"}
+  BS_ID: {type: string, doc: "Sample ID"}
+  output: {type: string, doc: "Output file name"}
   cram_file: {type: 'File', doc: "Input histology file"}
-  REF: {type: 'File', doc: "Input histology file"}
+  Reference: {type: 'File', doc: "Input histology file"}
 
 outputs:
-#  tmp_file: {type: File, outputSource: bcftool/tmp_file}
-  output_file: {type: File, outputSource: pysam/output_file}
+  output_file: {type: 'File?', outputSource: pysam/output_file}
 
 steps:
 
@@ -33,10 +26,10 @@ steps:
    pysam:
     run: ../tools/run.cwl
     in:
-      vcf: vcf
+      sample_vcf_file_tool: sample_vcf_file
       tsv_file: bcftool/tmp_file
       cram_file: cram_file
-      REF: REF
+      Reference: Reference
       BS_ID: BS_ID
       output: output
     out: [output_file]

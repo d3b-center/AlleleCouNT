@@ -39,7 +39,7 @@ def get_VAF_pos(cram_path, chrom, pos,ref, alt, reference=None):
             VAF for required Allele at the position given
     """
     if len(ref) >1 or len(alt) >1 : # excluding indels
-        return("Indels are ignored at the moment")
+        return("Indels are ignored at the moment","Indels are ignored")
     if cram_path.endswith('cram'):
         if not reference:
             raise IOError('Must provide reference with CRAM')
@@ -60,12 +60,12 @@ def get_VAF_pos(cram_path, chrom, pos,ref, alt, reference=None):
         seq=read.query_sequence
         if len(seq)>diff:
             if seq[diff-1] == alt:
-                count_required=+1
+                count_required=count_required+1
             total_reads+=1 
     if total_reads == 0:
-        return("No read found")
+        return("No read found","0")
     else:          
-        return(round(count_required/total_reads,4))
+        return(round(count_required/total_reads,4),total_reads)
 
 #extract gene list from vcf file
 gene=object.read_gzip_file(args.Input) 
@@ -75,9 +75,9 @@ del gene[-1]
 df = pd.read_csv(args.tsv,sep = '\t')
 
 #set up pandas dataframe
-df.columns=["popmax","chr", "start", "stop", "ref","alt", "ref,alt depth", "Total depth", "VAF"]
+df.columns=["popmax","chr", "start", "stop", "ref","alt", "ref,alt depth", "Germline_depth", "Germline_VAF"]
 df['gene']= gene
-df = df[["gene","popmax","chr", "start", "stop", "ref","alt", "ref,alt depth", "Total depth", "VAF"]]
+df = df[["gene","popmax","chr", "start", "stop", "ref","alt", "ref,alt depth", "Germline_depth", "Germline_VAF"]]
 
 #remove entries with . as popmax
 df=df[df.popmax != "."]
@@ -88,16 +88,24 @@ df=df[df.popmax < 0.01]
 df=df.drop(['popmax'], axis=1)
 
 list_VAF=[]
+list_total_reads=[]
 
 #run the for loop to calculate lost VAF
 for index, row in df.iterrows():
     #print(row['chr'], row['start'])
-    list_VAF.append(get_VAF_pos(args.cram,row['chr'],row['start'],row['ref'],row['alt'],args.ref))
-df["Lost_VAF"]=list_VAF
+    output=get_VAF_pos(args.cram,row['chr'],row['start'],row['ref'],row['alt'],args.ref)
+    list_VAF.append(output[0])
+    list_total_reads.append(output[1])
+df["Tumor_VAF"]=list_VAF
+df["Tumor_depth"]=list_total_reads
 df["BS_ID"]=args.Sample
 
+#split columns
+#df['bases'] = df['ref,alt depth'].str.split(',')
+df[['ref_depth', 'alt_depth']] = df['ref,alt depth'].str.split(',', 1, expand=True)
+
 #reorder the columns
-df = df[["BS_ID","gene","chr", "start", "stop", "ref","alt", "ref,alt depth", "Total depth", "VAF","Lost_VAF"]]
+df = df[["BS_ID","gene","chr", "start", "stop", "ref",'ref_depth','alt','alt_depth','Germline_depth','Tumor_depth','Germline_VAF','Tumor_VAF']]
 
 #output_file in tsv format
 output_file_name=(args.output)+".tsv"

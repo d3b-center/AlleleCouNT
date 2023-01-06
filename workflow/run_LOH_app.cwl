@@ -6,11 +6,11 @@ requirements:
 - class: StepInputExpressionRequirement
 
 inputs:
-  sample_vcf_file: {type: 'File', doc: "Input variant calling file for the sample"}
+  sample_vcf_file: {type: 'File', doc: "Input germline file for the sample"}
   BS_ID: {type: string, doc: "Sample ID"}
   output: {type: string, doc: "Output file name"}
-  cram_file: {type: 'File', doc: "Input histology file"}
-  Reference: {type: 'File', doc: "Input histology file"}
+  cram_file: {type: 'File', doc: "Tumor input cram file"}
+  Reference: {type: 'File', doc: "Human reference"}
 
 outputs:
   output_file: {type: 'File?', outputSource: pysam/output_file}

@@ -7,7 +7,7 @@ requirements:
     dockerPull: "pgc-images.sbgenomics.com/d3b-bixu/loh:1.0.0"
   - class: ResourceRequirement
     coresMin: 1
-    ramMin: 4096
+    ramMin: 4000
   - class: InitialWorkDirRequirement
     listing:
        - entryname: run_bcftools

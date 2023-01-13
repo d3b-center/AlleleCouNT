@@ -3,7 +3,7 @@
 cwlVersion: v1.2
 class: Workflow
 doc: |-
-  This workflow runs bcftools to extract data from vcf and feed it into pysam to aggregate cram read analysisto compute lost VAF
+  This workflow runs bcftools to extract data from vcf and feed it into pysam to compute lost VAF
 
 requirements:
 - class: StepInputExpressionRequirement

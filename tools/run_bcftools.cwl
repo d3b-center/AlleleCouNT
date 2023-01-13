@@ -1,39 +1,39 @@
-class: CommandLineTool
+#!/usr/bin/env cwl-runner
+
 cwlVersion: v1.2
+class: CommandLineTool
 
 requirements:
-  - class: ShellCommandRequirement
-  - class: DockerRequirement
-    dockerPull: "pgc-images.sbgenomics.com/d3b-bixu/loh:1.0.0"
-  - class: ResourceRequirement
-    coresMin: 1
-    ramMin: 4000
-  - class: InitialWorkDirRequirement
-    listing:
-       - entryname: run_bcftools
-         entry:
-           $include: ../scripts/run_bcftools.sh
-baseCommand: [ sh ]
-#stdout: "montage.out"
-#stderr: "montage.err"
-arguments:
-  - position: 1
-    shellQuote: false
-    valueFrom: >- 
-        run_bcftools	
+- class: ShellCommandRequirement
+- class: DockerRequirement
+  dockerPull: pgc-images.sbgenomics.com/d3b-bixu/loh:1.0.0
+- class: ResourceRequirement
+  coresMin: 1
+  ramMin: 4000
+- class: InitialWorkDirRequirement
+  listing:
+  - entryname: run_bcftools.sh
+    entry:
+      $include: ../scripts/run_bcftools.sh
 
 inputs:
-    sample_vcf_file_tool:
-     type: 'File'
-     inputBinding:
-       position: 1 
-     doc: "Sample VCF file"  
-
-#    test: {type: 'File?', inputBinding: {prefix: --test, position: 2}, doc: "Gene level CNV file"}
+  sample_vcf_file_tool:
+    doc: Sample VCF file
+    type: File
+    inputBinding:
+      position: 1
 
 outputs:
   tmp_file:
-    type: 'File?'
+    doc: Extract variant info using bcftool in tsv format
+    type: File
     outputBinding:
-       glob: tmp_file.tsv  
-    doc: "Extract variant info using bcftool in tsv format"
+      glob: tmp_file.tsv
+
+baseCommand:
+- sh
+arguments:
+- position: 1
+  valueFrom: >-
+    run_bcftools.sh	
+  shellQuote: false

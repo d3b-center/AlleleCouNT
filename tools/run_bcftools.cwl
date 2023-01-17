@@ -18,14 +18,14 @@ requirements:
 
 inputs:
   sample_vcf_file_tool:
-    doc: Sample VCF file
+    doc: provide sample VCF file in gz format
     type: File
     inputBinding:
       position: 1
 
 outputs:
   tmp_file:
-    doc: Extract variant info using bcftool in tsv format
+    doc: variant info using bcftool in tsv format
     type: File
     outputBinding:
       glob: tmp_file.tsv
@@ -37,3 +37,4 @@ arguments:
   valueFrom: >-
     run_bcftools.sh	
   shellQuote: false
+id: run_bcftools

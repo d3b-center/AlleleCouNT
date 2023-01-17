@@ -9,24 +9,25 @@ requirements:
 - class: StepInputExpressionRequirement
 
 inputs:
-  BS_ID:
-    doc: Sample ID
+  bs_id:
+    doc: provide sample id
     type: string
-  Reference:
-    doc: Human reference in Fasta format
-    type: File
   cram_file:
-    doc: Tumor input cram file
+    doc: tumor input file in cram or bam format with index file
     type: File
   output:
-    doc: Output file name
+    doc: provide output file name
     type: string
+  reference:
+    doc: human reference in fasta format with index file
+    type: 'File?'
   sample_vcf_file:
-    doc: Input germline file for the sample
+    doc: provide germline file for this sample
     type: File
 
 outputs:
   output_file:
+    doc: output file from this app
     type: File
     outputSource: run_pysam/output_file
 
@@ -39,10 +40,10 @@ steps:
     - tmp_file
   run_pysam:
     in:
-      BS_ID: BS_ID
-      Reference: Reference
+      bs_id: bs_id
       cram_file: cram_file
       output: output
+      reference: reference
       sample_vcf_file_tool: sample_vcf_file
       tsv_file: run_bcftools/tmp_file
     run: ../tools/run_pysam.cwl

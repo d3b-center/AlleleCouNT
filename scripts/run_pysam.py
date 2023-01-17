@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
+
 import argparse
 import subprocess
 import pandas as pd
-import pysam
-import format_parser as object
+import pysam as pys
+import format_parser as ob
 
 # coding=utf8
 # Initialize parser
@@ -10,17 +12,18 @@ parser = argparse.ArgumentParser()
 
 # Adding optional argument
 parser.add_argument(
-    "-i", "--Input", help="provide sample vcf file in gz format")
+    "-i", "--input", help="provide sample vcf file in gz format")
 
 parser.add_argument(
-    "-I", "--tsv", help="provide bcftools output in tsv format")
+    "-t", "--tsv", help="provide bcftools output in tsv format")
 
-parser.add_argument("-c", "--cram", help="provide cram file for the sample")
+parser.add_argument(
+    "-c", "--cram", help="provide cram/bam file for the sample")
 
 parser.add_argument(
     "-r", "--ref", help="provide human reference in fasta format")
 
-parser.add_argument("-id", "--Sample", help="provide sample ID")
+parser.add_argument("-id", "--sampleid", help="provide sample ID")
 
 parser.add_argument("-o", "--output", help="output file name in tsv format")
 
@@ -29,9 +32,9 @@ args = parser.parse_args()
 
 
 def get_VAF_pos(cram_bam_path, chrom, pos, ref, alt, reference=None):
-    """ Return VAF at a pos for an alt
+    """ Return percent of reads match with alt and total number of reads found
         Args:
-            cram_path (str): path to CRAM or BAM file
+            cram_bam_path (str): path to CRAM or BAM file
             chrom (str): locus chromosome name
             pos (int): 1-based locus coordinate
             reference: path to reference FASTA, required for CRAM
@@ -40,24 +43,26 @@ def get_VAF_pos(cram_bam_path, chrom, pos, ref, alt, reference=None):
             IOError if CRAM provided without reference
                     if cram_path has neither cram nor bam extension
         Return:
-            VAF for required Allele at the position given
+            The percent of reads that match the given alt (as a float)
+            The total reads found at that position (int)
+
     """
     if len(ref) > 1 or len(alt) > 1:  # excluding indels
         return ("Indels are ignored at the moment", "Indels are ignored")
     if cram_bam_path.endswith('cram'):
         if not reference:
             raise IOError('Must provide reference with CRAM')
-        cram = pysam.AlignmentFile(
+        cram_bam = pys.AlignmentFile(
             cram_bam_path, 'rc', reference_filename=reference)
     elif cram_bam_path.endswith('bam'):
-        cram = pysam.AlignmentFile(cram_bam_path, 'rb')
+        cram_bam = pys.AlignmentFile(cram_bam_path, 'rb')
     else:
         raise IOError(
             'File provided to "cram" argument must have .cram or .bam extension')
 
     mapq = []
     mq0 = 0
-    aligned_reads = cram.fetch(chrom, pos-1, pos, multiple_iterators=False)
+    aligned_reads = cram_bam.fetch(chrom, pos-1, pos, multiple_iterators=False)
     total_reads = 0
     count_required = 0
     for read in aligned_reads:
@@ -75,50 +80,50 @@ def get_VAF_pos(cram_bam_path, chrom, pos, ref, alt, reference=None):
 
 
 # extract gene list from vcf file
-gene = object.read_gzip_file(args.Input)
-del gene[-1]
+gene = ob.read_vcf_gene_list(args.input)
+del gene[-1]  # last element in the list is end of the file which is not required
 
 # read tsv file from bcftools
-df = pd.read_csv(args.tsv, sep='\t')
+dataframe = pd.read_csv(args.tsv, sep='\t')
 
 # set up pandas dataframe
-df.columns = ["popmax", "chr", "start", "stop", "ref",
-              "alt", "ref,alt depth", "Germline_depth", "Germline_VAF"]
-df['gene'] = gene
-df = df[["gene", "popmax", "chr", "start", "stop", "ref",
-         "alt", "ref,alt depth", "Germline_depth", "Germline_VAF"]]
+dataframe.columns = ["popmax", "chr", "start", "stop", "ref",
+                     "alt", "ref,alt depth", "Germline_depth", "Germline_VAF"]
+dataframe['gene'] = gene
 
 # remove entries with . as popmax
-df = df[df.popmax != "."]
-df['popmax'] = df['popmax'].astype(float)
+dataframe = dataframe[dataframe.popmax != "."]
+dataframe['popmax'] = dataframe['popmax'].astype(float)
 
 # set criteria for rare variant
-df = df[df.popmax < 0.01]
-df = df.drop(['popmax'], axis=1)
+dataframe = dataframe[dataframe.popmax < 0.01]
+dataframe = dataframe.drop(['popmax'], axis=1)  # not required anymore
 
 list_VAF = []
 list_total_reads = []
 
 # run the for loop to calculate lost VAF
-for index, row in df.iterrows():
+for index, row in dataframe.iterrows():
     # print(row['chr'], row['start'])
-    output = get_VAF_pos(
+    vaf, total_reads = get_VAF_pos(
         args.cram, row['chr'], row['start'], row['ref'], row['alt'], args.ref)
-    list_VAF.append(output[0])
-    list_total_reads.append(output[1])
-df["Tumor_VAF"] = list_VAF
-df["Tumor_depth"] = list_total_reads
-df["BS_ID"] = args.Sample
+    list_VAF.append(vaf)
+    list_total_reads.append(total_reads)
+dataframe["Tumor_VAF"] = list_VAF
+dataframe["Tumor_depth"] = list_total_reads
+dataframe["BS_ID"] = args.sampleid
 
 # split columns
-# df['bases'] = df['ref,alt depth'].str.split(',')
-df[['ref_depth', 'alt_depth']] = df['ref,alt depth'].str.split(
+dataframe[['ref_depth', 'alt_depth']] = dataframe['ref,alt depth'].str.split(
     ',', 1, expand=True)
 
 # reorder the columns
-df = df[["BS_ID", "gene", "chr", "start", "stop", "ref", 'ref_depth', 'alt',
-         'alt_depth', 'Germline_depth', 'Tumor_depth', 'Germline_VAF', 'Tumor_VAF']]
+dataframe = dataframe[["BS_ID", "gene", "chr", "start", "stop", "ref", 'ref_depth', 'alt',
+                       'alt_depth', 'Germline_depth', 'Tumor_depth', 'Germline_VAF', 'Tumor_VAF']]
 
 # output_file in tsv format
-output_file_name = (args.output)+".tsv"
-df.to_csv(output_file_name, sep="\t", index=False)
+output_file_name = args.output
+if not(output_file_name.endswith('tsv')):
+    output_file_name = output_file_name+".tsv"
+
+dataframe.to_csv(output_file_name, sep="\t", index=False)

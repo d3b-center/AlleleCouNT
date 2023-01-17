@@ -20,51 +20,53 @@ requirements:
       $include: ../scripts/format_parser.py
 
 inputs:
-  BS_ID:
-    doc: Sample ID
+  bs_id:
+    doc: provide sample id
     type: string
     inputBinding:
-      prefix: -id
-      position: 2
-  Reference:
-    doc: VCF file for the sample
-    type: File
-    inputBinding:
-      prefix: -r
+      prefix: --sampleid
       position: 2
   cram_file:
-    doc: VCF file for the sample
+    doc: provide cram/bam file for the sample
     type: File
     secondaryFiles:
     - .crai
     inputBinding:
-      prefix: -c
+      prefix: --cram
       position: 2
   output:
-    doc: Output file
+    doc: output file name
     type: string
     inputBinding:
-      prefix: -o
+      prefix: --output
+      position: 2
+  reference:
+    doc: provide human reference in fasta format
+    type: File?
+    secondaryFiles:
+    - .fai
+    inputBinding:
+      prefix: --ref
       position: 2
   sample_vcf_file_tool:
-    doc: VCF file for the sample
+    doc: provide vcf file
     type: File
     inputBinding:
-      prefix: -i
+      prefix: --input
       position: 2
   tsv_file:
     doc: tsv file from bcftool
     type: File
     inputBinding:
-      prefix: -I
+      prefix: --tsv
       position: 2
 
 outputs:
   output_file:
-    doc: Required file with VAF and Lost VAF
+    doc: output file with VAF and Lost VAF
     type: File
     outputBinding:
-      glob: $(inputs.output).tsv
+      glob: $(inputs.output)*
 
 baseCommand:
 - python3
@@ -73,3 +75,4 @@ arguments:
   valueFrom: >-
     run_python.py	
   shellQuote: false
+id: run_pysam

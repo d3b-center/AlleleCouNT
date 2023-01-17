@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 bcftools +fill-tags $1 -o tmp.VAF.vcf.gz -- -t FORMAT/VAF
 

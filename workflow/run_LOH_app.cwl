@@ -20,7 +20,7 @@ inputs:
     type: string
   reference:
     doc: human reference in fasta format with index file
-    type: 'File?'
+    type: File?
   sample_vcf_file:
     doc: provide germline file for this sample
     type: File

@@ -2,7 +2,8 @@
 
 cwlVersion: v1.2
 class: CommandLineTool
-
+id: run_bcftools
+doc: runs bcftools to pull out required details from vcf file
 requirements:
 - class: ShellCommandRequirement
 - class: DockerRequirement
@@ -15,26 +16,18 @@ requirements:
   - entryname: run_bcftools.sh
     entry:
       $include: ../scripts/run_bcftools.sh
-
-inputs:
-  sample_vcf_file_tool:
-    doc: provide sample VCF file in gz format
-    type: File
-    inputBinding:
-      position: 1
-
-outputs:
-  tmp_file:
-    doc: variant info using bcftool in tsv format
-    type: File
-    outputBinding:
-      glob: tmp_file.tsv
-
-baseCommand:
-- sh
+baseCommand: [ sh ]
 arguments:
 - position: 1
   valueFrom: >-
     run_bcftools.sh	
   shellQuote: false
-id: run_bcftools
+inputs:
+  sample_vcf_file_tool: { type: File, doc: provide sample VCF file in gz format, inputBinding: { position: 1 } }
+
+outputs:
+  tmp_file:
+    type: File
+    outputBinding:
+      glob: tmp_file.tsv
+    doc: variant info using bcftool in tsv format

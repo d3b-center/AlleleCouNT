@@ -17,31 +17,31 @@ def extract_format_fields_vcf(lines, header):
     format_seg = lines.split(",")
     for seg in format_seg:
         format_split.append(seg.split("|"))
-    Fields = header.split("|")
+    fields = header.split("|")
     label = "Gene"
     gene = ""
-    if label in Fields:
-        index_to_pick = Fields.index(label)
+    if label in fields:
+        index_to_pick = fields.index(label)
         for split in format_split:
             # Get gene if pick field in the format is 1
-            if split[Fields.index("PICK")] == "1":
+            if split[fields.index("PICK")] == "1":
                 gene = split[index_to_pick - 1]
                 break
             # Get gene if canonical field in the format is YES
-            elif split[Fields.index("CANONICAL")] == "YES":
+            elif split[fields.index("CANONICAL")] == "YES":
                 gene = split[index_to_pick - 1]
                 break
             # Get gene if TSL field in the format is 1
-            elif split[Fields.index("TSL")] == "1":
+            elif split[fields.index("TSL")] == "1":
                 gene = split[index_to_pick - 1]
                 break
             # Get gene if BIOTYPE field in the format is protein_coding
-            elif split[Fields.index("BIOTYPE")] == "protein_coding":
+            elif split[fields.index("BIOTYPE")] == "protein_coding":
                 gene = split[index_to_pick - 1]
                 break
             # else select gene that is next to modifer field
-            elif split[Fields.index("SYMBOL")] == "MODIFIER":
-                modifier = Fields.index("MODIFIER")
+            elif split[fields.index("SYMBOL")] == "MODIFIER":
+                modifier = fields.index("MODIFIER")
                 gene = split[modifier + 1]
     return gene
 

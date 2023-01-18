@@ -2,8 +2,8 @@
 
 import argparse
 import pandas as pd
-import pysam as pys
-import format_parser as ob
+import pysam as pysam
+import format_parser as format_parser
 
 # coding=utf8
 # Initialize parser
@@ -49,16 +49,16 @@ def get_VAF_pos(cram_bam_path, chrom, pos, ref, alt, reference=None):
     if cram_bam_path.endswith("cram"):
         if not reference:
             raise IOError("Must provide reference with CRAM")
-        cram_bam = pys.AlignmentFile(cram_bam_path, "rc", reference_filename=reference)
+        cram_bam = pysam.AlignmentFile(
+            cram_bam_path, "rc", reference_filename=reference
+        )
     elif cram_bam_path.endswith("bam"):
-        cram_bam = pys.AlignmentFile(cram_bam_path, "rb")
+        cram_bam = pysam.AlignmentFile(cram_bam_path, "rb")
     else:
         raise IOError(
             'File provided to "cram" argument must have .cram or .bam extension'
         )
 
-    mapq = []
-    mq0 = 0
     aligned_reads = cram_bam.fetch(chrom, pos - 1, pos, multiple_iterators=False)
     total_reads = 0
     count_required = 0
@@ -77,14 +77,14 @@ def get_VAF_pos(cram_bam_path, chrom, pos, ref, alt, reference=None):
 
 
 # extract gene list from vcf file
-gene = ob.read_vcf_gene_list(args.input)
+gene = format_parser.read_vcf_gene_list(args.input)
 del gene[-1]  # last element in the list is end of the file which is not required
 
 # read tsv file from bcftools
-dataframe = pd.read_csv(args.tsv, sep="\t")
+bcftool_tsv = pd.read_csv(args.tsv, sep="\t")
 
 # set up pandas dataframe
-dataframe.columns = [
+bcftool_tsv.columns = [
     "popmax",
     "chr",
     "start",
@@ -95,38 +95,38 @@ dataframe.columns = [
     "Germline_depth",
     "Germline_VAF",
 ]
-dataframe["gene"] = gene
+bcftool_tsv["gene"] = gene
 
 # remove entries with . as popmax
-dataframe = dataframe[dataframe.popmax != "."]
-dataframe["popmax"] = dataframe["popmax"].astype(float)
-
-# set criteria for rare variant
-dataframe = dataframe[dataframe.popmax < 0.01]
-dataframe = dataframe.drop(["popmax"], axis=1)  # not required anymore
+bcftool_tsv = bcftool_tsv[bcftool_tsv.popmax != "."]
+bcftool_tsv["popmax"] = bcftool_tsv["popmax"].astype(float)
 
 list_VAF = []
 list_total_reads = []
 
 # run the for loop to calculate lost VAF
-for index, row in dataframe.iterrows():
+for index, row in bcftool_tsv.iterrows():
     # print(row['chr'], row['start'])
     vaf, total_reads = get_VAF_pos(
         args.cram, row["chr"], row["start"], row["ref"], row["alt"], args.ref
     )
     list_VAF.append(vaf)
     list_total_reads.append(total_reads)
-dataframe["Tumor_VAF"] = list_VAF
-dataframe["Tumor_depth"] = list_total_reads
-dataframe["BS_ID"] = args.sampleid
+bcftool_tsv["Tumor_VAF"] = list_VAF
+bcftool_tsv["Tumor_depth"] = list_total_reads
+bcftool_tsv["BS_ID"] = args.sampleid
 
 # split columns
-dataframe[["ref_depth", "alt_depth"]] = dataframe["ref,alt depth"].str.split(
+bcftool_tsv[["ref_depth", "alt_depth"]] = bcftool_tsv["ref,alt depth"].str.split(
     ",", 1, expand=True
 )
 
+# set criteria for rare variant
+bcftool_tsv = bcftool_tsv[bcftool_tsv.popmax < 0.01]
+bcftool_tsv = bcftool_tsv.drop(["popmax"], axis=1)  # not required anymore
+
 # reorder the columns
-dataframe = dataframe[
+bcftool_tsv = bcftool_tsv[
     [
         "BS_ID",
         "gene",
@@ -149,4 +149,4 @@ output_file_name = args.output
 if not (output_file_name.endswith("tsv")):
     output_file_name = output_file_name + ".tsv"
 
-dataframe.to_csv(output_file_name, sep="\t", index=False)
+bcftool_tsv.to_csv(output_file_name, sep="\t", index=False)

@@ -2,8 +2,8 @@
 
 import argparse
 import pandas as pd
-import pysam as pysam
-import format_parser as format_parser
+from pysam import AlignmentFile
+from format_parser import read_vcf_gene_list
 
 # coding=utf8
 # Initialize parser
@@ -49,11 +49,9 @@ def get_VAF_pos(cram_bam_path, chrom, pos, ref, alt, reference=None):
     if cram_bam_path.endswith("cram"):
         if not reference:
             raise IOError("Must provide reference with CRAM")
-        cram_bam = pysam.AlignmentFile(
-            cram_bam_path, "rc", reference_filename=reference
-        )
+        cram_bam = AlignmentFile(cram_bam_path, "rc", reference_filename=reference)
     elif cram_bam_path.endswith("bam"):
-        cram_bam = pysam.AlignmentFile(cram_bam_path, "rb")
+        cram_bam = AlignmentFile(cram_bam_path, "rb")
     else:
         raise IOError(
             'File provided to "cram" argument must have .cram or .bam extension'
@@ -77,7 +75,7 @@ def get_VAF_pos(cram_bam_path, chrom, pos, ref, alt, reference=None):
 
 
 # extract gene list from vcf file
-gene = format_parser.read_vcf_gene_list(args.input)
+gene = read_vcf_gene_list(args.input)
 del gene[-1]  # last element in the list is end of the file which is not required
 
 # read tsv file from bcftools
@@ -101,6 +99,10 @@ bcftool_tsv["gene"] = gene
 bcftool_tsv = bcftool_tsv[bcftool_tsv.popmax != "."]
 bcftool_tsv["popmax"] = bcftool_tsv["popmax"].astype(float)
 
+# set criteria for rare variant
+bcftool_tsv = bcftool_tsv[bcftool_tsv.popmax < 0.01]
+bcftool_tsv = bcftool_tsv.drop(["popmax"], axis=1)  # not required anymore
+
 list_VAF = []
 list_total_reads = []
 
@@ -120,10 +122,6 @@ bcftool_tsv["BS_ID"] = args.sampleid
 bcftool_tsv[["ref_depth", "alt_depth"]] = bcftool_tsv["ref,alt depth"].str.split(
     ",", 1, expand=True
 )
-
-# set criteria for rare variant
-bcftool_tsv = bcftool_tsv[bcftool_tsv.popmax < 0.01]
-bcftool_tsv = bcftool_tsv.drop(["popmax"], axis=1)  # not required anymore
 
 # reorder the columns
 bcftool_tsv = bcftool_tsv[

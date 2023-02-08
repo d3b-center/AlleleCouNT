@@ -11,24 +11,19 @@ requirements:
 - class: ResourceRequirement
   coresMin: 1
   ramMin: 4000
-- class: InitialWorkDirRequirement
-  listing:
-  - entryname: run_bam-readcount.sh
-    entry:
-      $include: ../scripts/run_bam-readcount.sh
-baseCommand: [ "sh" ]
-arguments:
-- position: 1
-  valueFrom: >-
-    run_bam-readcount.sh	
-  shellQuote: false
+
+baseCommand: [ "bam-readcount" ]
+
+arguments: ["-w1"]
+
 inputs:
-  cram_bam_file: { type: File, secondaryFiles: [ { pattern: ".crai", required: false } ,{ pattern: ".bai",required: false } ],doc: provide sample cram or bam file with index file, inputBinding: { position: 1 } }
-  ref_file: { type: File, secondaryFiles: [.fai ], doc: human reference in fasta format with index file, inputBinding: { position: 2 } }  
-  list_file: { type: File, doc: list containing chr start and end to run bam-readcount tool for specific regions , inputBinding: { position: 3 }}
+  cram_bam_file: { type: File, secondaryFiles: [ { pattern: ".crai", required: false } ,{ pattern: ".bai",required: false } ],doc: provide sample cram or bam file with index file, inputBinding: { position: 3 } }
+  ref_file: { type: File, secondaryFiles: [.fai ], doc: human reference in fasta format with index file, inputBinding: { prefix: -f, position: 2 } }  
+  list_file: { type: File, doc: list containing chr start and end to run bam-readcount tool for specific regions , inputBinding: { prefix: -l, position: 4 }}
+
+stdout: "output_readcount.out"
+
 outputs:
   readcount_file:
-    type: 'File'
-    outputBinding:
-      glob: "output_readcount.out"
+    type: stdout
     doc: raw bam-readcount output that requires parsing

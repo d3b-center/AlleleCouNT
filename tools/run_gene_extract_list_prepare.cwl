@@ -3,6 +3,7 @@
 cwlVersion: v1.2
 class: CommandLineTool
 id: run_gene_extract_list_prepare
+label: Extract_germline
 doc: collects info from bcftool and add gene, prepare list for bam-readcount tool
 requirements:
 - class: ShellCommandRequirement
@@ -29,13 +30,14 @@ arguments:
 inputs: 
   bs_id: { doc: provide sample id, type: string, inputBinding: { prefix: --sampleid, position: 2} }
   sample_vcf_file_tool: { doc: provide vcf file, type: File, inputBinding: { prefix: --input, position: 2 }  }
-  tsv_file: { doc: tsv file from bcftool , type: File, inputBinding: { prefix: --tsv, position: 2 } }
+  frequency: { doc: provide popmax cutoff, type: float, inputBinding: { prefix: --frequency, position: 2 }  }
+  peddy_file: { doc: Provide ped file for the trios, type: 'File?', inputBinding: { prefix: --peddy, position: 2 } }
 
 outputs:
    output_file_1_tool:
     type: File
     outputBinding:
-     glob: "bcftool_file.tsv"
+     glob: "bcftool_germline_output.tsv"
     doc: output file with VAF and Lost VAF
    output_file_2_tool:
     type: File

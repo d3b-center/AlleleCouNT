@@ -24,25 +24,26 @@ def extract_format_fields_vcf(lines, header):
         index_to_pick = fields.index(label)
         for split in format_split:
             # Get gene if pick field in the format is 1
-            if split[fields.index("PICK")] == "1":
-                gene = split[index_to_pick - 1]
-                break
+            if len(split) > 120: # run only with list elements with more than 120 in length that contains gene info
+                if split[fields.index("PICK")] == "1":
+                    gene = split[index_to_pick - 1]
+                    break
             # Get gene if canonical field in the format is YES
-            elif split[fields.index("CANONICAL")] == "YES":
-                gene = split[index_to_pick - 1]
-                break
+                elif split[fields.index("CANONICAL")] == "YES":
+                    gene = split[index_to_pick - 1]
+                    break
             # Get gene if TSL field in the format is 1
-            elif split[fields.index("TSL")] == "1":
-                gene = split[index_to_pick - 1]
-                break
+                elif split[fields.index("TSL")] == "1":
+                    gene = split[index_to_pick - 1]
+                    break
             # Get gene if BIOTYPE field in the format is protein_coding
-            elif split[fields.index("BIOTYPE")] == "protein_coding":
-                gene = split[index_to_pick - 1]
-                break
+                elif split[fields.index("BIOTYPE")] == "protein_coding":
+                    gene = split[index_to_pick - 1]
+                    break
             # else select gene that is next to modifer field
-            elif split[fields.index("SYMBOL")] == "MODIFIER":
-                modifier = fields.index("MODIFIER")
-                gene = split[modifier + 1]
+                elif split[fields.index("SYMBOL")] == "MODIFIER":
+                    modifier = fields.index("MODIFIER")
+                    gene = split[modifier + 1]     
     return gene
 
 
@@ -66,7 +67,7 @@ def read_vcf_gene_list(file):
                 gene_list.append(
                     extract_format_fields_vcf(line.split("\t")[7], CSQ_header)
                 )
-                break
+                break    
         # Process remaining records
         for line in f:
             gene_list.append(extract_format_fields_vcf(line.split("\t")[7], CSQ_header))

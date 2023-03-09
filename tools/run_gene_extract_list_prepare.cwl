@@ -38,7 +38,7 @@ outputs:
     type: File
     outputBinding:
      glob: "bcftool_germline_output.tsv"
-    doc: output file with VAF and Lost VAF
+    doc: output file with VAF and lost VAF
    output_file_2_tool:
     type: File
     outputBinding:

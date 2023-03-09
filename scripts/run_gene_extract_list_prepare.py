@@ -19,7 +19,7 @@ parser.add_argument("-ped", "--peddy", help="Peddy file")
 args = parser.parse_args()
 
 
-def extract_BS_id(peddy_file,column_label):
+def extract_BS_id_peddy_file(peddy_file,column_label):
     pattern = 'BS_'
     paternal_id_uni = list(peddy_file[column_label].unique())
     for i in paternal_id_uni:
@@ -41,10 +41,10 @@ def organize_clean_dataframe(bcftool_tsv,gene,args):
     bcftool_tsv = bcftool_tsv.drop(["popmax"], axis=1)  # not required anymore
 
     # split columns
-    bcftool_tsv[["ref_depth_germline", "alt_depth_germline"]] = bcftool_tsv["ref,alt depth" ].str.split(",", 1, expand=True)
+    bcftool_tsv[["proband_germline_ref_depth", "proband_germline_alt_depth"]] = bcftool_tsv["ref,alt depth" ].str.split(",", 1, expand=True)
     bcftool_tsv["BS_ID"] = args.sampleid    
 
-    bcftool_tsv["germline_vaf"] =  bcftool_tsv["germline_vaf"].round(2)
+    bcftool_tsv["proband_germline_vaf"] =  bcftool_tsv["proband_germline_vaf"].round(2)
 
     return bcftool_tsv
 
@@ -67,10 +67,10 @@ subprocess.check_output(cmd_bcftools_tags, shell=True).decode('utf-8').strip()
 cmd_bcftools="echo 'None'"
 
 sample_list=args.sampleid
-if (args.peddy): #check samples more than 1 in vcf and peddy file provided
+if (args.peddy): #check peddy file provided
     peddy_file = pd.read_csv(args.peddy, sep="\t",low_memory=False)
-    paternal_id=extract_BS_id(peddy_file,"paternal_id")
-    maternal_id=extract_BS_id(peddy_file,"maternal_id")
+    paternal_id=extract_BS_id_peddy_file(peddy_file,"paternal_id")
+    maternal_id=extract_BS_id_peddy_file(peddy_file,"maternal_id")
     if(paternal_id and maternal_id):
         sample_list=sample_list+','+paternal_id+','+maternal_id
     elif (paternal_id):
@@ -98,10 +98,10 @@ if (args.peddy):
         "ref,alt depth",
         "ref,alt depth_paternal",
         "ref,alt depth_maternal",
-        "germline_depth",
+        "proband_germline_depth",
         "paternal_germline_depth",
         "maternal_germline_depth",
-        "germline_vaf",
+        "proband_germline_vaf",
         "paternal_germline_vaf",
         "maternal_germline_vaf"
         ]
@@ -119,16 +119,16 @@ if (args.peddy):
             "end",
             "ref",
             "alt",
-            "ref_depth_germline",
-            "alt_depth_germline",
+            "proband_germline_ref_depth",
+            "proband_germline_alt_depth",
             "paternal_ref_depth_germline",
             "paternal_alt_depth_germline",
             "maternal_ref_depth_germline",
             "maternal_alt_depth_germline",
-            "germline_depth",
+            "proband_germline_depth",
             "paternal_germline_depth",
             "maternal_germline_depth",
-            "germline_vaf",
+            "proband_germline_vaf",
             "paternal_germline_vaf",
             "maternal_germline_vaf",
             ]
@@ -147,9 +147,9 @@ if (args.peddy):
         "alt",
         "ref,alt depth",
         "ref,alt depth_maternal",
-        "germline_depth",
+        "proband_germline_depth",
         "maternal_germline_depth",
-        "germline_vaf",
+        "proband_germline_vaf",
         "maternal_germline_vaf"
         ]  
         bcftool_tsv[["maternal_ref_depth_germline", "maternal_alt_depth_germline"]] = bcftool_tsv["ref,alt depth_maternal"].str.split(",", 1, expand=True)       
@@ -164,18 +164,18 @@ if (args.peddy):
             "end",
             "ref",
             "alt",
-            "ref_depth_germline",
-            "alt_depth_germline",
+            "proband_germline_ref_depth",
+            "proband_germline_alt_depth",
             "maternal_ref_depth_germline",
             "maternal_alt_depth_germline",
-            "germline_depth",
+            "proband_germline_depth",
             "maternal_germline_depth",
-            "germline_vaf",
+            "proband_germline_vaf",
             "maternal_germline_vaf",
             ]
         ]
 
-         bcftool_data_processed["maternal_germline_vaf"] = bcftool_data_processed["maternal_germline_vaf"].round(2)
+        bcftool_data_processed["maternal_germline_vaf"] = bcftool_data_processed["maternal_germline_vaf"].round(2)
     elif(paternal_id):
         bcftool_tsv.columns = [
         "popmax",
@@ -186,13 +186,13 @@ if (args.peddy):
         "alt",
         "ref,alt depth",
         "ref,alt depth_paternal",
-        "germline_depth",
+        "proband_germline_depth",
         "paternal_germline_depth",
-        "germline_vaf",
+        "proband_germline_vaf",
         "paternal_germline_vaf",
         ]      
         bcftool_tsv[["paternal_ref_depth_germline", "paternal_alt_depth_germline"]] = bcftool_tsv["ref,alt depth_paternal"].str.split(",", 1, expand=True)  
-        bcftool_tsv[["ref_depth_germline", "alt_depth_germline"]] = bcftool_tsv["ref,alt depth"].str.split(",", 1, expand=True)
+        bcftool_tsv[["proband_germline_ref_depth", "proband_germline_alt_depth"]] = bcftool_tsv["ref,alt depth"].str.split(",", 1, expand=True)
         bcftool_data_processed=organize_clean_dataframe(bcftool_tsv,gene,args)
 
         bcftool_data_processed = bcftool_data_processed[
@@ -204,8 +204,8 @@ if (args.peddy):
             "end",
             "ref",
             "alt",
-            "ref_depth_germline",
-            "alt_depth_germline",
+            "proband_germline_ref_depth",
+            "proband_germline_alt_depth",
             "paternal_ref_depth_germline",
             "paternal_alt_depth_germline",
             "germline_depth",
@@ -215,7 +215,7 @@ if (args.peddy):
             ]
         ]
 
-         bcftool_data_processed["paternal_germline_vaf"] = bcftool_data_processed["paternal_germline_vaf"].round(2)
+        bcftool_data_processed["paternal_germline_vaf"] = bcftool_data_processed["paternal_germline_vaf"].round(2)
     else:
         # set up pandas dataframe
         bcftool_tsv.columns = [
@@ -226,8 +226,8 @@ if (args.peddy):
         "ref",
         "alt",
         "ref,alt depth",
-        "germline_depth",
-        "germline_vaf",
+        "proband_germline_depth",
+        "proband_germline_vaf",
         ]
         bcftool_data_processed=organize_clean_dataframe(bcftool_tsv,gene,args)
 
@@ -240,8 +240,8 @@ if (args.peddy):
             "end",
             "ref",
             "alt",
-            "ref_depth_germline",
-            "alt_depth_germline",
+            "proband_germline_ref_depth",
+            "proband_germline_alt_depth",
             "germline_depth",
             "germline_vaf",
         ]
@@ -256,8 +256,8 @@ else:
     "ref",
     "alt",
     "ref,alt depth",
-    "germline_depth",
-    "germline_vaf",
+    "proband_germline_depth",
+    "proband_germline_vaf",
     ]
     bcftool_data_processed=organize_clean_dataframe(bcftool_tsv,gene,args)
 
@@ -270,19 +270,19 @@ else:
         "end",
         "ref",
         "alt",
-        "ref_depth_germline",
-        "alt_depth_germline",
+        "proband_germline_ref_depth",
+        "proband_germline_alt_depth",
         "germline_depth",
-        "germline_vaf",
+        "proband_germline_vaf",
     ]
     ]
 
- #   bcftool_data_processed["germline_vaf"] =  bcftool_data_processed["germline_vaf"].round(2)
-bcftool_data_processed.to_csv("bcftool_germline_output.tsv", sep="\t", index=False)
+list_output_file_name=args.sampleid+".list_bam-readcount.tsv"
+germline_output_file=args.sampleid+".germline.output.tsv"
+bcftool_data_processed.to_csv(germline_output_file, sep="\t", index=False)
 
 list_readcount = bcftool_data_processed[["chr", "start", "end"]]
 list_readcount.rename(columns={"chr": "chromosome"})
-list_readcount.to_csv("list_bam-readcount.tsv", sep="\t", index=False)
+list_readcount.to_csv(list_output_file_name, sep="\t", index=False)
 
-cmd_remove_tmb_files='rm tmp.VAF.vcf.gz tmp_bcftool_germline.tsv'
-subprocess.check_output(cmd_remove_tmb_files, shell=True).decode('utf-8').strip()
+subprocess.run('rm tmp.VAF.vcf.gz tmp_bcftool_germline.tsv', shell=True)

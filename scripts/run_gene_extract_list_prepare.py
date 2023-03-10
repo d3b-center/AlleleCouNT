@@ -5,7 +5,7 @@ import pandas as pd
 from format_parser import read_vcf_gene_list
 import re
 import subprocess
-
+import os
 # coding=utf8
 # Initialize parser
 parser = argparse.ArgumentParser()
@@ -208,7 +208,7 @@ if (args.peddy):
             "proband_germline_alt_depth",
             "paternal_ref_depth_germline",
             "paternal_alt_depth_germline",
-            "germline_depth",
+            "proband_germline_depth",
             "paternal_germline_depth",
             "germline_vaf",
             "paternal_germline_vaf",
@@ -242,8 +242,8 @@ if (args.peddy):
             "alt",
             "proband_germline_ref_depth",
             "proband_germline_alt_depth",
-            "germline_depth",
-            "germline_vaf",
+            "proband_germline_depth",
+            "proband_germline_vaf",
         ]
         ]
 else:
@@ -272,7 +272,7 @@ else:
         "alt",
         "proband_germline_ref_depth",
         "proband_germline_alt_depth",
-        "germline_depth",
+        "proband_germline_depth",
         "proband_germline_vaf",
     ]
     ]
@@ -285,4 +285,6 @@ list_readcount = bcftool_data_processed[["chr", "start", "end"]]
 list_readcount.rename(columns={"chr": "chromosome"})
 list_readcount.to_csv(list_output_file_name, sep="\t", index=False)
 
-subprocess.run('rm tmp.VAF.vcf.gz tmp_bcftool_germline.tsv', shell=True)
+#subprocess.run('rm tmp.VAF.vcf.gz tmp_bcftool_germline.tsv', shell=True)
+os.remove("tmp.VAF.vcf.gz") # removing temo files
+os.remove("tmp_bcftool_germline.tsv")

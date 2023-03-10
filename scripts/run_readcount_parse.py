@@ -5,6 +5,7 @@ import pandas as pd
 import subprocess
 import re
 import os
+import sys
 from threading import Thread
 
 # coding=utf8
@@ -15,12 +16,10 @@ parser.add_argument("--tsv", help="bcftool_output")
 parser.add_argument("--sampleid", help="sampleid for the run")
 parser.add_argument("--reference", help="human reference")
 parser.add_argument("--patientbamcrams", help="provide bam/cram file for tumor")
-parser.add_argument("--paternalbamcram", help="provide bam/cram file for tumor")
-parser.add_argument("--maternalbamcram", help="provide bam/cram file for tumor")
 parser.add_argument("--list", help="list from germline to check for in tumor")
 parser.add_argument("--peddy", help="Peddy file")
 parser.add_argument("--minDepth",default=1,help="min tumor depth required to be consider for output")
-parser.add_argument("--test",help="test")
+parser.add_argument("--bamcramsampleID",help="Array of sample IDs for provided for crams file in the same order as cram input (input format): BS_abcd,BS_1234,BS_xyzz")
 
 args = parser.parse_args()
 
@@ -144,7 +143,7 @@ def parse_bam_readcout_data(bamcram,ID):
    
     #if candidate not in "patient":
     headers=["proband_"+ID+"_"+i if i not in ('chr', 'start', 'ref', 'alt') else i for i in headers ] #prepare headers for parental dataframes
-    print(headers)
+    
     read_file_name = ID+'_readcount.out'
     #rum bam-readcount
     cmd_bamreadcount ='bam-readcount -w1 -f '+args.reference+' '+bamcram+' -l '+ args.list +' > '+read_file_name
@@ -172,18 +171,35 @@ if __name__ == "__main__":
 
     # read tsv file from bcftools
     bcftool_tsv = pd.read_csv(args.tsv, sep="\t")  # germline
-    
+    sample_array=[]
     cram_files = args.patientbamcrams.split(',')
-    for file in cram_files:
-        t1 = CustomThread(target=parse_bam_readcout_data, args=(args.paternalbamcram,args.sampleid))
+    if args.bamcramsampleID:
+        sample_array = args.bamcramsampleID.split(',')
+    else:
+        for file_address in cram_files:
+            cmd_samtools="samtools samples -T SM -X "+file_address+" "+file_address+".crai" # check of bam 
+            result=subprocess.run(cmd_samtools,shell=True,capture_output=True, text=True, check=True)
+            sample=result.stdout.split()[0]
+            if len(re.findall("BS_",sample)):
+                sample_array.append(sample)
+                print("BS ID found: Using it for "+file_address, file=sys.stdout)
+            else:
+                file_name=file_address.split("/")[-1]
+                nameroot=file_name.split(".")[0]
+                print("Using nameroot for "+file_name, file=sys.stdout)
+                sample_array.append(nameroot)
+
+    fired_thread=[]
+    for index,file_address in enumerate(cram_files):
+        t1 = CustomThread(target=parse_bam_readcout_data, args=(file_address,sample_array[index]))
         t1.start()
+        fired_thread.append(t1)
     
     merge_dataframe=bcftool_tsv
-    for i in range(0,len(cram_files),1):
-        patient_tumor_df=t1.join()
+    for thread_running in fired_thread:
+        patient_tumor_df=thread_running.join()
     #t2 = CustomThread(target=parse_bam_readcout_data, args=(args.paternalbamcram,"paternal"))
     #t3 = CustomThread(target=parse_bam_readcout_data, args=(args.maternalbamcram,"maternal"))
-    
         merge_dataframe = pd.merge(merge_dataframe, patient_tumor_df, how="inner", on=["chr", "start", "ref", "alt"])
     #merge_dataframe["tumor_depth"] = merge_dataframe["ref_depth_tumor"].astype(int) + merge_dataframe["alt_depth_tumor"].astype(int)
 

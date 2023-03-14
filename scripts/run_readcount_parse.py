@@ -6,131 +6,48 @@ import subprocess
 import re
 import os
 import sys
-from threading import Thread
-
+from format_parser import extract_BS_id_peddy_file
+from format_parser import CustomThread
+from format_parser import func_parse_bamread_data
 # coding=utf8
 # Initialize parser
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--tsv", help="bcftool_output")
-parser.add_argument("--sampleid", help="sampleid for the run")
+parser.add_argument("--tsv", help="bcftool_output_file")
+parser.add_argument("--sampleid", help="patient primary sampleid for this run")
 parser.add_argument("--reference", help="human reference")
-parser.add_argument("--patientbamcrams", help="provide bam/cram file for tumor")
-parser.add_argument("--list", help="list from germline to check for in tumor")
-parser.add_argument("--peddy", help="Peddy file")
-parser.add_argument("--minDepth",default=1,help="min tumor depth required to be consider for output")
-parser.add_argument("--bamcramsampleID",help="Array of sample IDs for provided for crams file in the same order as cram input (input format): BS_abcd,BS_1234,BS_xyzz")
+parser.add_argument("--patientbamcrams",nargs='+',help="provide one or more bam/cram file for patient tumor")
+parser.add_argument("--list", help="path to directory containing regions from germline run to consider in tumor")
+parser.add_argument("--peddy", help="Peddy file containing parental information")
+parser.add_argument("--minDepth",default=1,help="min tumor depth required to be consider for tumor output")
+parser.add_argument("--bamcramsampleID",nargs='+',help="Array of sample IDs for provided for cram/bam files in the same order as inputs")
 
 args = parser.parse_args()
 
-def func_parse_data(bam_readcount_output_file,parse_data):
-    # taken from https://github.com/genome/bam-readcount/tree/master/tutorial
-    # Per-base/indel data fields
-    # IMPORTANT: this relies on Python 3.6+ to maintain insertion order
-    # Each field is a key with value a function to convert to the
-    # appropriate data type
-    base_fields = {
-        "base": str,
-        "count": int,
-        "avg_mapping_quality": float,
-        "avg_basequality": float,
-        "avg_se_mapping_quality": float,
-        "num_plus_strand": int,
-        "num_minus_strand": int,
-        "avg_pos_as_fraction": float,
-        "avg_num_mismatches_as_fraction": float,
-        "avg_sum_mismatch_qualities": float,
-        "num_q2_containing_reads": int,
-        "avg_distance_to_q2_start_in_q2_reads": float,
-        "avg_clipped_length": float,
-        "avg_distance_to_effective_3p_end": float,
-    }
+def worker(region_list,bamcram,read_file_name,ID,headers):
+    # Run the function for a specific region and returns required pandas dataframe
+    # Each thread will run it's own subprocess to speed up the computation"
 
-    # Open the bam-readcount output file and read it line by line
-    # Note that the output has no header, so we consume every line
-    with open(bam_readcount_output_file) as in_fh:
-        for line in in_fh:
-            # Strip newline from end of line
-            line = line.strip()
-            # Fields are tab-separated, so split into a list on \t
-            fields = line.split("\t")
-            # The first four fields contain overall information about the position
-            chrom = fields[0]  # Chromosome/reference
-            position = int(fields[1])  # Position (1-based)
-            reference_base = fields[2]  # Reference base
-            depth = int(fields[3])  # Depth of coverage
-            # The remaining fields are data for each base or indel
-            # Iterate over each base/indel
-            for base_data_string in fields[4:]:
-                # We will store per-base/indel data in a dict
-                base_data = {}
-                # Split the base/indel data on ':'
-                base_values = base_data_string.split(":")
-                # Iterate over each field of the base/indel data
-                for i, base_field in enumerate(base_fields.keys()):
-                    # Store each field of data, converting to the appropriate
-                    # data type
-                    base_data[base_field] = base_fields[base_field](base_values[i])
-                # Skip zero-depth bases
-                if depth == 0:
-                    continue
-                if base_data["base"] == "=":
-                    continue
-                # Skip reference bases and bases with no counts
-                if base_data["base"] == reference_base:  # or base_data['count'] == 0:
-                    continue
-                # Calculate an allele frequency (VAF) from the base counts
-                vaf = base_data["count"] / depth
-                # Filter on minimum depth and VAF
-                if depth >= int(args.minDepth):  # minDepth
-                    if (
-                        base_data["base"][0] == "-" and len(base_data["base"]) > 1
-                    ):  # convert bam-readcount deletion type to maf file format
-                        reference_base_tmp = reference_base
-                        reference_base = base_data["base"][1:]
-                        base_data["base"] = reference_base_tmp
-                    if (
-                        base_data["base"][0] == "+" and len(base_data["base"]) > 1
-                    ):  # convert bam-readcount insertion type to maf file format
-                        base_data["base"] = reference_base + base_data["base"][1:]
+    cmd_bamreadcount ='bam-readcount -w1 -f '+args.reference+' '+bamcram+' -l '+ region_list +' > '+read_file_name
+    subprocess.run(cmd_bamreadcount,shell=True)
 
-                    row = [
-                        chrom,
-                        position,
-                        reference_base,
-                        base_data["base"],
-                        "%0.2f" % (vaf),
-                        depth,
-                        base_data["count"],
-                    ]
-
-                    parse_data.append(row)
-    return parse_data
-def extract_BS_id_peddy_file(peddy_file,column_label):
-    pattern = 'BS_'
-    paternal_id_uni = list(peddy_file[column_label].unique())
-    for i in paternal_id_uni:
-        i=str(i)
-        if len(re.findall(pattern,i)):
-            return(i)
-    return None
-
-class CustomThread(Thread):
-    def __init__(self, group=None, target=None, name=None,args=(), kwargs={}, Verbose=None):
-        Thread.__init__(self, group, target, name, args, kwargs)
-        self._return = None
- 
-    def run(self):
-        if self._target is not None:
-            self._return = self._target(*self._args, **self._kwargs)
-             
-    def join(self, *args):
-        Thread.join(self, *args)
-        return self._return
-
-def parse_bam_readcout_data(bamcram,ID):
     parse_data = []
+    list_data = func_parse_bamread_data(read_file_name,parse_data,args.minDepth)  # tumor data as a list
+    df_readcount_thread = pd.DataFrame(list_data, columns=headers) # convert to pandas with headers
 
+    target_header= "proband_"+ID+"_tumor_depth"
+    first_header= "proband_"+ID+"_tumor_ref_depth"
+    second_header= "proband_"+ID+"_tumor_alt_depth"
+    
+    df_readcount_thread[target_header] = df_readcount_thread[first_header].astype(int) + df_readcount_thread[second_header].astype(int)
+    os.remove(read_file_name)
+
+    return df_readcount_thread
+
+def parse_bam_readcout_data(bamcram,ID,path_lists):
+
+    #This function operates on bam/crams files to prepare headers, read regions from dir of list,fire threads and collect data to merge them together
+    # Function will return required data for given bamcram file and lists
     headers = [
         "chr",
         "start",
@@ -141,40 +58,46 @@ def parse_bam_readcout_data(bamcram,ID):
         "tumor_ref_depth",
     ]  # tumor headers
    
-    #if candidate not in "patient":
     headers=["proband_"+ID+"_"+i if i not in ('chr', 'start', 'ref', 'alt') else i for i in headers ] #prepare headers for parental dataframes
     
-    read_file_name = ID+'_readcount.out'
-    #rum bam-readcount
-    cmd_bamreadcount ='bam-readcount -w1 -f '+args.reference+' '+bamcram+' -l '+ args.list +' > '+read_file_name
-    subprocess.run(cmd_bamreadcount,shell=True)
-    list_data = func_parse_data(read_file_name,parse_data)  # tumor data as a list
-    df_readcount = pd.DataFrame(list_data, columns=headers) # convert to pandas with headers
+    ext_file=args.sampleid+".list"
+   
+    current_path = os.getcwd()
+    list_dir_path = path_lists#os.path.join(current_path,'tmp_list') 
+    count_list_files=0
+    
+    list_files_found=[]
+    for x in os.listdir(list_dir_path):
+        if x.endswith(ext_file):
+            list_files_found.append(x)
+    
+    fired_cram_thread=[]
+    for thread_list in range(0,len(list_files_found),1):
+        read_file_name =ID+"."+list_files_found[thread_list]+'.readcount.out'
+        bamread_outfile_name = os.path.join(list_dir_path,read_file_name) 
+        bamread_input_list_name = os.path.join(list_dir_path,list_files_found[thread_list])
+        thread_per_bamcram = CustomThread(target=worker, args=(bamread_input_list_name,bamcram,bamread_outfile_name,ID,headers))
+        thread_per_bamcram .start()
+        fired_cram_thread.append(thread_per_bamcram)
+    patient_thread_frame=[]
+    for thread_per_bamcram in fired_cram_thread:
+        patient_thread_frame.append(thread_per_bamcram.join())   
 
-    target_header= "proband_"+ID+"_tumor_depth"
-    first_header= "proband_"+ID+"_tumor_ref_depth"
-    second_header= "proband_"+ID+"_tumor_alt_depth"
-    df_readcount[target_header] = df_readcount[first_header].astype(int) + df_readcount[second_header].astype(int)
-    os.remove(read_file_name)
-    #df_readcount
+    df_readcount = pd.concat(patient_thread_frame)
+    df_readcount.sort_values(by='start', ascending=False)
+
     return df_readcount
 
 
 if __name__ == "__main__":
-    #patient_tumor_df=pd.DataFrame()
-    #parse_bam_readcout_data(args.patientbamcram,"patient")
-
-    #t1 = CustomThread(target=parse_bam_readcout_data, args=(args.paternalbamcram,"patient"))
-    #t1.start()
-    #t1.join()
-    #patient_tumor_df=t1.join()
 
     # read tsv file from bcftools
     bcftool_tsv = pd.read_csv(args.tsv, sep="\t")  # germline
     sample_array=[]
-    cram_files = args.patientbamcrams.split(',')
+    
+    cram_files = args.patientbamcrams#.split(',')
     if args.bamcramsampleID:
-        sample_array = args.bamcramsampleID.split(',')
+        sample_array = args.bamcramsampleID#.split(' ')
     else:
         for file_address in cram_files:
             cmd_samtools="samtools samples -T SM -X "+file_address+" "+file_address+".crai" # check of bam 
@@ -190,21 +113,30 @@ if __name__ == "__main__":
                 sample_array.append(nameroot)
 
     fired_thread=[]
+    patient_tumor_df=[]
     for index,file_address in enumerate(cram_files):
-        t1 = CustomThread(target=parse_bam_readcout_data, args=(file_address,sample_array[index]))
+        t1 = CustomThread(target=parse_bam_readcout_data, args=(file_address,sample_array[index],args.list))
         t1.start()
         fired_thread.append(t1)
-    
     merge_dataframe=bcftool_tsv
     for thread_running in fired_thread:
         patient_tumor_df=thread_running.join()
     #t2 = CustomThread(target=parse_bam_readcout_data, args=(args.paternalbamcram,"paternal"))
     #t3 = CustomThread(target=parse_bam_readcout_data, args=(args.maternalbamcram,"maternal"))
         merge_dataframe = pd.merge(merge_dataframe, patient_tumor_df, how="inner", on=["chr", "start", "ref", "alt"])
-    #merge_dataframe["tumor_depth"] = merge_dataframe["ref_depth_tumor"].astype(int) + merge_dataframe["alt_depth_tumor"].astype(int)
-
+    
     # output_file in tsv format
     loh_output_file_name = args.sampleid + ".loh.out.tsv"
+    merge_dataframe.to_csv(loh_output_file_name, sep="\t", index=False)      
+    
+    #
+#    os.remove(args.tsv)
+#    for list_file in os.listdir(args.list): # deleting files from the tmp folder
+#        print(list_file)
+#        if list_file.endswith(".list"):
+#            os.remove(list_file)
+    #os.remove(*+"."+args.sampleid+".list")
+    
     '''
     if (args.peddy): #check peddy file provided
         #t1.start()
@@ -260,13 +192,8 @@ if __name__ == "__main__":
     else:
         loh_output_file_name = args.sampleid+".patient" + ".loh.out.tsv"
     '''    
-    merge_dataframe.to_csv(loh_output_file_name, sep="\t", index=False)      
-    
 
-    #os.remove(args.tsv)
-    #os.remove(args.list)
-
-'''
+    '''
     merge_dataframe = merge_dataframe[
         [
             "BS_ID",

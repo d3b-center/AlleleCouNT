@@ -30,13 +30,13 @@ steps:
       frequency_tool: frequency
       peddy_file_tool: peddy_file
     out:
-      [ output_file_1_tool, output_file_2_tool]
+      [ output_file_1_tool,output_file_2_tool]
   run_readcount_parser:
     run: ../tools/run_readcount_parser.cwl
     in:
       bs_id: BS_ID
       germline_file: run_gene_extract_list_prepare/output_file_1_tool
-      list: run_gene_extract_list_prepare/output_file_2_tool
+      list_dir: run_gene_extract_list_prepare/output_file_2_tool
       minDepth: minDepth
       reference: reference
       patientbamcrams : bam_cram_file

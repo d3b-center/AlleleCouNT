@@ -10,8 +10,8 @@ requirements:
 - class: DockerRequirement
   dockerPull: pgc-images.sbgenomics.com/d3b-bixu/loh:1.0.1
 - class: ResourceRequirement
-  coresMin: 1
-  ramMin: 4000
+  coresMin: 8
+  ramMin: 16000
 - class: InitialWorkDirRequirement
   listing:
   - entryname: run_gene_extract_list_prepare.py
@@ -40,7 +40,7 @@ outputs:
      glob: $(inputs.bs_id)*.germline.output.tsv
     doc: output file with VAF and lost VAF
    output_file_2_tool:
-    type: File
+    type: Directory
     outputBinding:
-     glob: $(inputs.bs_id)*bam-readcount.tsv
-    doc: output list(of positions) that act as input to bam-readcount
+      glob: "tmp_list"
+#    doc: output list(of positions) that act as input to bam-readcount

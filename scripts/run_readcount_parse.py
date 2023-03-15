@@ -9,6 +9,7 @@ import sys
 from format_parser import extract_BS_id_peddy_file
 from format_parser import CustomThread
 from format_parser import func_parse_bamread_data
+
 # coding=utf8
 # Initialize parser
 parser = argparse.ArgumentParser()
@@ -77,7 +78,7 @@ def parse_bam_readcout_data(bamcram,ID,path_lists):
         bamread_outfile_name = os.path.join(list_dir_path,read_file_name) 
         bamread_input_list_name = os.path.join(list_dir_path,list_files_found[thread_list])
         thread_per_bamcram = CustomThread(target=worker, args=(bamread_input_list_name,bamcram,bamread_outfile_name,ID,headers))
-        thread_per_bamcram .start()
+        thread_per_bamcram.start()
         fired_cram_thread.append(thread_per_bamcram)
     patient_thread_frame=[]
     for thread_per_bamcram in fired_cram_thread:
@@ -88,47 +89,52 @@ def parse_bam_readcout_data(bamcram,ID,path_lists):
 
     return df_readcount
 
-
-if __name__ == "__main__":
-
+def main():
     # read tsv file from bcftools
     bcftool_tsv = pd.read_csv(args.tsv, sep="\t")  # germline
     sample_array=[]
     
     cram_files = args.patientbamcrams#.split(',')
-    if args.bamcramsampleID:
+    
+    if (args.bamcramsampleID):
         sample_array = args.bamcramsampleID#.split(' ')
+        print("Using user provided enums:",sample_array, file=sys.stderr)
+        
     else:
         for file_address in cram_files:
             cmd_samtools="samtools samples -T SM -X "+file_address+" "+file_address+".crai" # check of bam 
             result=subprocess.run(cmd_samtools,shell=True,capture_output=True, text=True, check=True)
             sample=result.stdout.split()[0]
+            print(sample,file=sys.stderr)
             if len(re.findall("BS_",sample)):
                 sample_array.append(sample)
-                print("BS ID found: Using it for "+file_address, file=sys.stdout)
+                print("BS ID found: Using it for "+file_address, file=sys.stderr)
             else:
                 file_name=file_address.split("/")[-1]
                 nameroot=file_name.split(".")[0]
-                print("Using nameroot for "+file_name, file=sys.stdout)
+                print("Using nameroot for "+file_name, file=sys.stderr)
                 sample_array.append(nameroot)
 
-    fired_thread=[]
+    fired_threads=[]
     patient_tumor_df=[]
+    
     for index,file_address in enumerate(cram_files):
-        t1 = CustomThread(target=parse_bam_readcout_data, args=(file_address,sample_array[index],args.list))
-        t1.start()
-        fired_thread.append(t1)
+        fire_thread = CustomThread(target=parse_bam_readcout_data, args=(file_address,sample_array[index],args.list))
+        fire_thread.start()
+        fired_threads.append(fire_thread)
     merge_dataframe=bcftool_tsv
-    for thread_running in fired_thread:
+    
+    for thread_running in fired_threads:
         patient_tumor_df=thread_running.join()
-    #t2 = CustomThread(target=parse_bam_readcout_data, args=(args.paternalbamcram,"paternal"))
-    #t3 = CustomThread(target=parse_bam_readcout_data, args=(args.maternalbamcram,"maternal"))
         merge_dataframe = pd.merge(merge_dataframe, patient_tumor_df, how="inner", on=["chr", "start", "ref", "alt"])
     
     # output_file in tsv format
     loh_output_file_name = args.sampleid + ".loh.out.tsv"
     merge_dataframe.to_csv(loh_output_file_name, sep="\t", index=False)      
     
+
+if __name__ == "__main__":
+    main()
     #
 #    os.remove(args.tsv)
 #    for list_file in os.listdir(args.list): # deleting files from the tmp folder
@@ -136,81 +142,3 @@ if __name__ == "__main__":
 #        if list_file.endswith(".list"):
 #            os.remove(list_file)
     #os.remove(*+"."+args.sampleid+".list")
-    
-    '''
-    if (args.peddy): #check peddy file provided
-        #t1.start()
-        #patient_tumor_df=t1.join()
-       # merge_dataframe = pd.merge(bcftool_tsv, patient_tumor_df, how="inner", on=["chr", "start", "ref", "alt"])
-       # merge_dataframe["tumor_depth"] = merge_dataframe["ref_depth_tumor"].astype(int) + merge_dataframe["alt_depth_tumor"].astype(int)
-
-        peddy_file = pd.read_csv(args.peddy, sep="\t",low_memory=False)
-        paternal_id=extract_BS_id_peddy_file(peddy_file,"paternal_id")
-        maternal_id=extract_BS_id_peddy_file(peddy_file,"maternal_id")
-        if(paternal_id and maternal_id and args.paternalbamcram and args.maternalbamcram ):
-            t1.start()
-            #t2.start()
-            #t3.start()
-            patient_tumor_df=t1.join()
-            #paternal_tumor_df=t2.join()
-            #maternal_tumor_df=t3.join()
-            merge_dataframe = pd.merge(bcftool_tsv, patient_tumor_df, how="inner", on=["chr", "start", "ref", "alt"])
-            merge_dataframe["tumor_depth"] = merge_dataframe["ref_depth_tumor"].astype(int) + merge_dataframe["alt_depth_tumor"].astype(int)
-            #paternal_tumor_df=parse_bam_readcout_data(args.paternalbamcram,"paternal")
-            #paternal_tumor_df=pd.DataFrame()
-            #maternal_tumor_df=pd.DataFrame()
-            #t1 = CustomThread(target=parse_bam_readcout_data, args=(args.paternalbamcram,"paternal"))
-            #t2 = CustomThread(target=parse_bam_readcout_data, args=(args.maternalbamcram,"maternal"))
-            #maternal_tumor_df=parse_bam_readcout_data(args.maternalbamcram,"maternal")
-            
-            
-            #paternal_tumor_df["paternal_tumor_depth"] = paternal_tumor_df["paternal_ref_depth_tumor"].astype(int) + paternal_tumor_df["paternal_alt_depth_tumor"].astype(int)
-            #maternal_tumor_df["maternal_tumor_depth"] = maternal_tumor_df["maternal_ref_depth_tumor"].astype(int) + maternal_tumor_df["maternal_alt_depth_tumor"].astype(int)
-            #patient_paternal_maternal_df = pd.merge(pd.merge(merge_dataframe,paternal_tumor_df, how="inner", on=["chr", "start", "ref", "alt"]),maternal_tumor_df,how="inner", on=["chr", "start", "ref", "alt"])
-        
-            #loh_output_file_name = args.sampleid+".patient.paternal.maternal" + ".loh.out.tsv"
-            #patient_paternal_maternal_df.to_csv(loh_output_file_name, sep="\t", index=False)
-        
-        elif (paternal_id and args.paternalbamcram):
-            paternal_tumor_df=parse_bam_readcout_data(args.paternalbamcram,"paternal")
-            paternal_tumor_df["paternal_tumor_depth"] = paternal_tumor_df["paternal_ref_depth_tumor"].astype(int) + paternal_tumor_df["paternal_alt_depth_tumor"].astype(int)
-            patient_paternal_df = pd.merge(merge_dataframe,paternal_tumor_df, how="inner", on=["chr", "start", "ref", "alt"])
-        
-            loh_output_file_name = args.sampleid+".patient.paternal" + ".loh.out.tsv"
-            patient_paternal_df.to_csv(loh_output_file_name, sep="\t", index=False)
-        elif (maternal_id and args.maternalbamcram ):
-            maternal_tumor_df=parse_bam_readcout_data(args.maternalbamcram,"maternal")
-            maternal_tumor_df["maternal_tumor_depth"] = maternal_tumor_df["maternal_ref_depth_tumor"].astype(int) + maternal_tumor_df["maternal_alt_depth_tumor"].astype(int)
-            patient_maternal_df = pd.merge(merge_dataframe,maternal_tumor_df, how="inner", on=["chr", "start", "ref", "alt"])
-
-            loh_output_file_name = args.sampleid+".patient.maternal" + ".loh.out.tsv"
-            patient_maternal_df.to_csv(loh_output_file_name, sep="\t", index=False)
-        else: # if no sample id exist within peddy file
-            loh_output_file_name = args.sampleid+".patient" + ".loh.out.tsv"
-            merge_dataframe.to_csv(loh_output_file_name, sep="\t", index=False)    
-         
-    else:
-        loh_output_file_name = args.sampleid+".patient" + ".loh.out.tsv"
-    '''    
-
-    '''
-    merge_dataframe = merge_dataframe[
-        [
-            "BS_ID",
-            "gene",
-            "chr",
-            "start",
-            "end",
-            "ref",
-            "alt",
-            "ref_depth_germline",
-            "alt_depth_germline",
-            "germline_depth",
-            "germline_vaf",
-            "ref_depth_tumor",
-            "alt_depth_tumor",
-            "tumor_depth",
-            "vaf_tumor",
-        ]
-    ]
-    '''

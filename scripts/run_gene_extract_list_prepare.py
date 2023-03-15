@@ -2,12 +2,12 @@
 
 import argparse
 import pandas as pd
-from format_parser import read_vcf_gene_list
-from format_parser import extract_BS_id_peddy_file
 import re
 import subprocess
 import os
 import sys
+from format_parser import read_vcf_gene_list
+from format_parser import extract_BS_id_peddy_file
 
 # coding=utf8
 # Initialize parser
@@ -42,9 +42,7 @@ def organize_clean_dataframe(bcftool_tsv,gene,args):
 
     return bcftool_tsv
 
-
-if __name__ == "__main__":
-    
+def main():
     if not args.input.endswith('.vcf.gz'): #check input is in right format, important for security reasons
         raise Exception("Provide vcf file in .vcf.gz format")
 
@@ -299,3 +297,7 @@ if __name__ == "__main__":
     
     #remove tmp file
     os.remove("tmp_bcftool_germline.tsv")
+
+if __name__ == "__main__":
+    main()
+        

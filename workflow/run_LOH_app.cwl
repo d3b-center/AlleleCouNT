@@ -10,14 +10,14 @@ requirements:
 
 inputs:
   BS_ID: {doc: provide sample id,type: string }
-  frequency: { doc: provide popmax cutoff, type: float }
-  peddy_file: { doc: Provide ped file for the trios, type: 'File?' }
-  bam_cram_file: { doc: tumor input file in cram or bam format with their index file, type: 'File[]' , secondaryFiles: [ { pattern: ".crai", required: false }, { pattern: ".bai", required: false } ] }
-  minDepth: { doc: provide minimum tumor depth to consider, type: int }
+  frequency: { doc: provide popmax cutoff for rare disease, type: float }
+  peddy_file: { doc: Provide ped file for the trio, type: 'File?' }
+  bamscrams: { doc: tumor input file in cram or bam format with their index file, type: 'File[]' , secondaryFiles: [ { pattern: ".crai", required: false }, { pattern: ".bai", required: false } ] }
+  minDepth: { doc: provide minDepth to consider for tumor reads, type: int }
   reference: { doc: human reference in fasta format with index file, type: File,secondaryFiles: [ .fai ] }
   sample_vcf_file: { doc: provide germline vcf file for this sample, type: File }
-  bamcramsampleIDs: { doc: provide germline vcf file for this sample, type: 'string[]?' }
-
+  bamcramsampleIDs: { doc: provide unique identifers (in the same order) for cram/bam files provided under patientbamcrams tag. Default is sample ID pulled from bam/cram files, type: 'string[]?' }
+  ram: {  doc: Provide ram based on the vcf and crams inputs,type: 'int?',default: 16} 
 outputs:
   output_file: { type: File, doc: output file from LOH app, outputSource: run_readcount_parser/loh_output_file_tool }
 
@@ -29,6 +29,7 @@ steps:
       sample_vcf_file_tool: sample_vcf_file
       frequency_tool: frequency
       peddy_file_tool: peddy_file
+      ram: ram
     out:
       [ output_file_1_tool,output_file_2_tool]
   run_readcount_parser:
@@ -39,8 +40,9 @@ steps:
       list_dir: run_gene_extract_list_prepare/output_file_2_tool
       minDepth: minDepth
       reference: reference
-      patientbamcrams : bam_cram_file
+      patientbamcrams : bamscrams
       peddy: peddy_file
       bamcramsampleID: bamcramsampleIDs
+      ram: ram
     out:
       [ loh_output_file_tool ]

@@ -171,7 +171,13 @@ def read_vcf_gene_list(file):
     return gene_list
 
 def extract_BS_id_peddy_file(peddy_file,column_label):
-    pattern = 'BS_'
+    """Returns sample id for the parent from the peddy file
+    Args:
+        file : peddy file and column label with the peddy file
+    Return:
+        Returns sample id for the parent from the peddy file
+    """
+    pattern = 'BS_' #recognize this pattern
     paternal_id_uni = list(peddy_file[column_label].unique())
     for i in paternal_id_uni:
         i=str(i)

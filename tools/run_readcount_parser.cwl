@@ -47,3 +47,8 @@ outputs:
     outputBinding:
      glob: $(inputs.bs_id)*loh.out.tsv
     doc: output file required from LOH app
+   log_output:
+    type: File
+    outputBinding:
+     glob: "*loh.log"
+    doc: output file required from LOH app 

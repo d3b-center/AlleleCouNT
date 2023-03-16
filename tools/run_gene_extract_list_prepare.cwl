@@ -11,7 +11,7 @@ requirements:
   dockerPull: pgc-images.sbgenomics.com/d3b-bixu/loh:1.0.1
 - class: InlineJavascriptRequirement  
 - class: ResourceRequirement
-  coresMin: 4
+  coresMin: 16
   ramMin: ${ return inputs.ram * 1000 } 
 - class: InitialWorkDirRequirement
   listing:
@@ -46,3 +46,8 @@ outputs:
     outputBinding:
       glob: "tmp_list"
     doc: directory containing region lists to run on tumor as an input to bam-readcount
+   log_output:
+    type: File
+    outputBinding:
+     glob: "*loh.log"
+    doc: output file with VAF from germline

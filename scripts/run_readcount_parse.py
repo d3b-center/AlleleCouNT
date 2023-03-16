@@ -9,6 +9,8 @@ import sys
 from format_parser import extract_BS_id_peddy_file
 from format_parser import CustomThread
 from format_parser import func_parse_bamread_data
+from datetime import datetime
+import logging
 
 # coding=utf8
 # Initialize parser
@@ -24,6 +26,8 @@ parser.add_argument("--minDepth",default=1,help="min tumor depth required to be 
 parser.add_argument("--bamcramsampleID",nargs='+',help="Array of sample IDs for provided for cram/bam files in the same order as inputs")
 
 args = parser.parse_args()
+
+logger= logging
 
 def worker(region_list,bamcram,read_file_name,ID,headers):
     # Run the function for a specific region and returns required pandas dataframe
@@ -72,6 +76,7 @@ def parse_bam_readcout_data(bamcram,ID,path_lists):
         if x.endswith(ext_file):
             list_files_found.append(x)
     
+    logger.info("Sample: %s fire threads for all the regions" %ID)
     fired_cram_thread=[]
     for thread_list in range(0,len(list_files_found),1):
         read_file_name =ID+"."+list_files_found[thread_list]+'.readcount.out'
@@ -83,56 +88,72 @@ def parse_bam_readcout_data(bamcram,ID,path_lists):
     patient_thread_frame=[]
     for thread_per_bamcram in fired_cram_thread:
         patient_thread_frame.append(thread_per_bamcram.join())   
-
+    logger.info("Sample: %s joining threads " %ID)
     df_readcount = pd.concat(patient_thread_frame)
     df_readcount.sort_values(by='start', ascending=False)
 
+    logger.info("Sample: %s return the pandas dataframe " %ID)
     return df_readcount
 
 def main():
+
+    logger_time=datetime.now().strftime("%Y_%m_%d-%I_%M_%S_%p")
+    name='tumor.'+str(logger_time)+'.loh.log'
+    logger_time=datetime.now().strftime("%Y_%m_%d-%I_%M_%S_%p")
+    logger.basicConfig(filename=name,format='%(asctime)s %(levelname)-8s %(message)s',level=logging.INFO,datefmt='%Y-%m-%d %H:%M:%S')
+
+    logger.info('Starting bamreadcount run')
+
     # read tsv file from bcftools
+    logger.info('Reading germline input') 
     bcftool_tsv = pd.read_csv(args.tsv, sep="\t")  # germline
     sample_array=[]
     
-    cram_files = args.patientbamcrams#.split(',')
+    cram_files = args.patientbamcrams
     
     if (args.bamcramsampleID):
-        sample_array = args.bamcramsampleID#.split(' ')
-        print("Using user provided enums:",sample_array, file=sys.stderr)
+        logger.info('User provided identifers for bam/cram files') 
+        sample_array = args.bamcramsampleID
+        if len(sample_array) != len(cram_files):
+            logger.critical("provide same number of identifiers as to bam/cram files")
+        logger.info("Using user provided enums: %s " % sample_array)
         
     else:
+        logger.info('Extracting identifiers from cram/bam files') 
         for file_address in cram_files:
             cmd_samtools="samtools samples -T SM -X "+file_address+" "+file_address+".crai" # check of bam 
             result=subprocess.run(cmd_samtools,shell=True,capture_output=True, text=True, check=True)
             sample=result.stdout.split()[0]
-            print(sample,file=sys.stderr)
+
             if len(re.findall("BS_",sample)):
                 sample_array.append(sample)
-                print("BS ID found: Using it for "+file_address, file=sys.stderr)
+                logger.info("BS ID found: Using it for %s " % file_address)
             else:
                 file_name=file_address.split("/")[-1]
                 nameroot=file_name.split(".")[0]
-                print("Using nameroot for "+file_name, file=sys.stderr)
+                logger.info("Using nameroot for %s  " % file_name)
                 sample_array.append(nameroot)
 
     fired_threads=[]
     patient_tumor_df=[]
     
     for index,file_address in enumerate(cram_files):
+        logger.info("Firing thread for %s  " % file_address)
         fire_thread = CustomThread(target=parse_bam_readcout_data, args=(file_address,sample_array[index],args.list))
         fire_thread.start()
         fired_threads.append(fire_thread)
+
     merge_dataframe=bcftool_tsv
     
     for thread_running in fired_threads:
         patient_tumor_df=thread_running.join()
         merge_dataframe = pd.merge(merge_dataframe, patient_tumor_df, how="inner", on=["chr", "start", "ref", "alt"])
-    
+    logger.info("Joined all cram file based threads")
+
     # output_file in tsv format
     loh_output_file_name = args.sampleid + ".loh.out.tsv"
     merge_dataframe.to_csv(loh_output_file_name, sep="\t", index=False)      
     
-
 if __name__ == "__main__":
     main()
     #

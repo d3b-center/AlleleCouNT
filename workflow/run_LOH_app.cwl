@@ -3,7 +3,7 @@
 cwlVersion: v1.2
 class: Workflow
 id: run_LOH_app
-doc: This workflow runs bcftools to extract data and prepare list of locations from vcf and feed it into bam-readcount to compute VAF and later parse, merge germline and tumor data together
+doc: This CWL workflow assesses the loss of heterozygosity (LOH) in the tumor for rare germline variants. Order of operations- This workflow runs bcftools to extract data and prepare list of locations from vcf and feed it into bam-readcount to compute VAF and later parse, merge germline and tumor data together. https://github.com/d3b-center/tumor-loh-app-dev/tree/feature/add-parental-info
 
 requirements:
 - class: StepInputExpressionRequirement
@@ -13,7 +13,7 @@ inputs:
   frequency: { doc: provide popmax cutoff for rare germline variants, type: float }
   peddy_file: { doc: provide ped file for the trio, type: 'File?' }
   bamscrams: { doc: tumor input file in cram or bam format with their index file, type: 'File[]' , secondaryFiles: [ { pattern: ".crai", required: false }, { pattern: ".bai", required: false } ] }
-  minDepth: { doc: provide minDepth to consider for tumor reads, type: int }
+  minDepth: { doc: provide minDepth to consider for tumor reads, type: 'int?', default: 1 }
   reference: { doc: human reference in fasta format with index file, type: File,secondaryFiles: [ .fai ] }
   sample_vcf_file: { doc: provide germline vcf file for this sample, type: File }
   bamcramsampleIDs: { doc: provide unique identifers (in the same order) for cram/bam files provided under bamcrams tag. Default is sample ID pulled from bam/cram files., type: 'string[]?' }

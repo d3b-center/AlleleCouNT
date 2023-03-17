@@ -19,7 +19,7 @@ parser.add_argument("--tsv", help="bcftool output file in tsv format")
 parser.add_argument("--sampleid", help="patient primary sampleid for this run")
 parser.add_argument("--reference", help="human reference")
 parser.add_argument("--patientbamcrams",nargs='+',help="provide one or more bam/cram file for patient tumor")
-parser.add_argument("--list", help="path to directory containing regions created by germline run to consider in tumor")
+parser.add_argument("--list_dir", help="path to directory containing regions created by germline run to consider in tumor")
 parser.add_argument("--peddy", help="peddy file containing parental information")
 parser.add_argument("--minDepth",default=1,help="min tumor depth required to be consider for tumor output")
 parser.add_argument("--bamcramsampleID",nargs='+',help="array of sample IDs provided for cram/bam files in the same order as input cram/bam files")
@@ -146,7 +146,7 @@ def main():
     #Firing threads per cram file provided by the user
     for index,file_address in enumerate(cram_files):
         logger.info("Firing thread for %s  " % file_address)
-        fire_thread = CustomThread(target=parse_bam_readcout_data, args=(file_address,sample_array[index],args.list))
+        fire_thread = CustomThread(target=parse_bam_readcout_data, args=(file_address,sample_array[index],args.list_dir))
         fire_thread.start()
         fired_threads.append(fire_thread)
 
@@ -160,7 +160,9 @@ def main():
     # output_file in tsv format
     loh_output_file_name = args.sampleid + ".loh.out.tsv"
     logger.info("Writing loh app output file")
-    merge_dataframe.to_csv(loh_output_file_name, sep="\t", index=False)      
+    merge_dataframe.to_csv(loh_output_file_name, sep="\t", index=False)    
+
+    logger.info('Tumor tool run sucessfully')   
     
 if __name__ == "__main__":
     main()

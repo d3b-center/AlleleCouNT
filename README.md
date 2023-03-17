@@ -1,6 +1,6 @@
-# Loss of Heterozygosity (LOH)
+# D3B:Loss of Heterozygosity (LOH)
 
-This CWL workflow assesses the loss of heterozygosity (LOH) in the tumor for rare germline variants (gnomad_3_1_1_AF_popmax < 0.01).
+LOH CWL workflow assesses the loss of heterozygosity(LOH) in the tumor for rare germline variants (gnomad_3_1_1_AF_popmax < 0.01).
 
 ### Repo Description
 
@@ -16,11 +16,11 @@ Here are the basic steps for the LOH assessment workflow:
 * Create an output file with (BS_id, gene, chr, start, stop, ref/alt alleles, ref/alt allele depths, VAF) for each of: proband germline, proband tumor, paternal germline, maternal germline covered by the tumor tool.
 
 
-(Optional) This workflow has the ability to analyze LOH for trios too, with multiple tumor samples. The input requirement for trios is a trio vcf, a peddy file, and a tumor cram file for the proband. Note: The user can provide multiple.cram or.bam files as needed.
+(Optional) This workflow has the ability to analyze LOH for trios, with multiple tumor samples. The input requirement for trios is a trio vcf, a peddy file, and a tumor cram file for the proband. Note: The user can provide multiple.cram or.bam files as needed.
 
 ### Cavatica Application
 
-This workflow has been deployed over cavatica. Here is the link to the workflow with few test runs.
+This workflow has been deployed over [cavatica](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/apps/Loss_of_Heterozygosity) with a [test run](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/tasks/89708628-085f-40ce-a15b-2d850d81eead/)
 
 ### Running it locally on a laptop?
 

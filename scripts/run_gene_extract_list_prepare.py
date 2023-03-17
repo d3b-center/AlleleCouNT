@@ -10,6 +10,7 @@ from format_parser import read_vcf_gene_list
 from format_parser import extract_BS_id_peddy_file
 from datetime import datetime
 import logging
+from pathlib import Path
 
 # coding=utf8
 # Initialize parser
@@ -71,7 +72,6 @@ def main():
     # extract gene list from vcf file
     logger.info('Extracting genes from vcf file')
     gene = read_vcf_gene_list(args.input)
-   # del gene[-1]  # last element in the list is end of the file which is not required
 
     sample_list=args.sampleid
     if (args.peddy): #check peddy file provided
@@ -88,19 +88,24 @@ def main():
         elif (maternal_id):
             logger.info('Maternal IDs found')
             sample_list=sample_list+','+maternal_id  
+
     logger.info('Running bcftool plugin to add VAF')
     cmd_bcftools_tags ='bcftools +fill-tags '+args.input+' -- -t FORMAT/VAF'
-    plugin=subprocess.Popen(cmd_bcftools_tags,shell=True,stdout=subprocess.PIPE)#.decode('utf-8').strip()
+    plugin=subprocess.Popen(cmd_bcftools_tags,shell=True,stdout=subprocess.PIPE)
 
     logger.info('Running bcftool to extract data from vcf file into a tmp file')
     cmd_bcftools_test="bcftools query -f '%gnomad_3_1_1_AF\t%CHROM\t%POS\t%END\t%REF\t%ALT\t[%AD\t][%DP\t][%VAF\t]\n' --samples "+sample_list+" "+"-o tmp_bcftool_germline.tsv"
     bcftool_tool=subprocess.run(cmd_bcftools_test,shell=True,stdin=plugin.stdout)
 
     # read tsv file from bcftools
-    logger.info('Reading tmp file from bcftool')
-    bcftool_tsv = pd.read_csv('tmp_bcftool_germline.tsv', sep="\t",low_memory=False)
+    my_file = Path("tmp_bcftool_germline.tsv")
+    if my_file.is_file():
+        logger.info('Reading tmp file from bcftool')
+        bcftool_tsv = pd.read_csv('tmp_bcftool_germline.tsv', sep="\t",low_memory=False)
+        del bcftool_tsv[bcftool_tsv.columns[-1]] #remove last  empty columns
+    else:    
+        logger.Exception('Incorrect sample ID or vcf.gz file provided! Please check the inputs')
     
-    del bcftool_tsv[bcftool_tsv.columns[-1]] #remove last  empty columns
     
     if (args.peddy):
         if(paternal_id and maternal_id ): #when paternal, maternal id found within peddy file

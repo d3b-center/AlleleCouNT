@@ -34,7 +34,7 @@ arguments:
 inputs: 
   bs_id: { doc: provide sample id for this run, type: string, inputBinding: { prefix: --sampleid, position: 2} }
   germline_file: { doc: provide germline output, type: File, inputBinding: { prefix: --tsv, position: 2 } }
-  list_dir: { doc: directory with regions stored as lists to run within bam/crams using bamreadcount , type: Directory, inputBinding: { prefix: --list, position: 2 } }
+  list_dir: { doc: directory with regions stored as lists to run within bam/crams using bamreadcount , type: Directory, inputBinding: { prefix: --list_dir, position: 2 } }
   minDepth: { doc: provide minDepth to consider for tumor reads, type: int, default: 1, inputBinding: { prefix: --minDepth, position: 2} } 
   reference: { doc: provide reference, type: File, secondaryFiles: [ .fai ], inputBinding: { prefix: --reference, position: 2} } 
   patientbamcrams: { doc: provide one or more patient bam/cram files, type: 'File[]', secondaryFiles: [ { pattern: ".crai", required: false } ,{ pattern: ".bai",required: false } ], inputBinding: { prefix: --patientbamcrams, position: 2} } 

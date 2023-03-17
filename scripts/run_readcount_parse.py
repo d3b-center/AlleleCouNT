@@ -15,14 +15,14 @@ import logging
 # Initialize parser
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--tsv", help="bcftool_output_file")
+parser.add_argument("--tsv", help="bcftool output file in tsv format")
 parser.add_argument("--sampleid", help="patient primary sampleid for this run")
 parser.add_argument("--reference", help="human reference")
 parser.add_argument("--patientbamcrams",nargs='+',help="provide one or more bam/cram file for patient tumor")
-parser.add_argument("--list", help="path to directory containing regions from germline run to consider in tumor")
-parser.add_argument("--peddy", help="Peddy file containing parental information")
+parser.add_argument("--list", help="path to directory containing regions created by germline run to consider in tumor")
+parser.add_argument("--peddy", help="peddy file containing parental information")
 parser.add_argument("--minDepth",default=1,help="min tumor depth required to be consider for tumor output")
-parser.add_argument("--bamcramsampleID",nargs='+',help="Array of sample IDs for provided for cram/bam files in the same order as inputs")
+parser.add_argument("--bamcramsampleID",nargs='+',help="array of sample IDs provided for cram/bam files in the same order as input cram/bam files")
 
 args = parser.parse_args()
 

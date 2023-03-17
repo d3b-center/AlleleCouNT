@@ -1,22 +1,25 @@
-# D3b Bixu Repository Template
+# Loss of Heterozygosity (LOH)
 
-Use this template to bootstrap a new D3b bixu repository 
-
-### Badges
-
-Update the LICENSE badge to point to the new repo location on GitHub.
-Note that the LICENSE badge will fail to render correctly unless the repo has
-been set to **public**.
-
-Add additional badges for CI, docs, and other integrations as needed within the
-`<p>` tag next to the LICENSE.
+This CWL workflow assesses the loss of heterozygosity (LOH) in the tumor for rare germline variants (gnomad_3_1_1_AF_popmax < 0.01).
 
 ### Repo Description
 
-Update the repositories description with a short summary of the repository's
-intent.
-Include an appropriate emoji at the start of the summary.
+This workflow is divided into two parts: 1) Germline tool and tumor tool
 
-Add a handful of tags that summarize topics relating to the repository.
-If the repo has a documentation site or webpage, add it next to the repository
-description.
+Here are the basic steps for the LOH assessment workflow:
+
+* Filter germline annotations to retain variants with gnomad_3_1_1_AF_popmax < 0.01 performed by the germline tool (this gets us rare germline variants).
+* Gather variant information (gene, chr, start, stop, ref/alt alleles, ref/alt allele depths, VAF) covered by the germline tool.
+* Search in a paired tumor sample (example match to above germline) and, if applicable, parental germline samples, for the same variant and calculate the VAF covered by tumor tool
+* Create an output file with (BS_id, gene, chr, start, stop, ref/alt alleles, ref/alt allele depths, VAF) for each of: proband germline, proband tumor, paternal germline, maternal germline covered by the tumor tool
+
+(Optional) This workflow has the ability to analyze LOH for trios too. The input requirement for trios is a trio vcf, a peddy file, and a tumor cram file for the proband. Note: The user can provide multiple cram or bam files as per the need.
+
+### Run it locally
+
+It is recommended to run this workflow on a system with high number of CPUs and memory (>=16 GB). Basic requirment is a running docker engine, and CWL tools. Here is the command line to run it locally:
+
+```
+cwltool workflow/run_LOH_app.cwl sample_input.yml
+```
+Inputs to the workflow need to be defined in input_workflow.yml

@@ -5,7 +5,6 @@ import pandas as pd
 import subprocess
 import re
 import os
-import sys
 from format_parser import extract_BS_id_peddy_file
 from format_parser import CustomThread
 from format_parser import func_parse_bamread_data
@@ -27,6 +26,7 @@ parser.add_argument("--bamcramsampleID",nargs='+',help="Array of sample IDs for 
 
 args = parser.parse_args()
 
+#define logging variable as global
 logger= logging
 
 def worker(region_list,bamcram,read_file_name,ID,headers):
@@ -51,7 +51,8 @@ def worker(region_list,bamcram,read_file_name,ID,headers):
 
 def parse_bam_readcout_data(bamcram,ID,path_lists):
 
-    #This function operates on bam/crams files to prepare headers, read regions from dir of list,fire threads and collect data to merge them together
+    # This function operates on bam/crams files to prepare headers, 
+    # read regions from dir of list, fire threads and collect data to merge them together
     # Function will return required data for given bamcram file and lists
     headers = [
         "chr",
@@ -68,15 +69,17 @@ def parse_bam_readcout_data(bamcram,ID,path_lists):
     ext_file=args.sampleid+".list"
    
     current_path = os.getcwd()
-    list_dir_path = path_lists#os.path.join(current_path,'tmp_list') 
+    list_dir_path = path_lists
     count_list_files=0
     
+    #reading lists from tmp_list dir
     list_files_found=[]
     for x in os.listdir(list_dir_path):
         if x.endswith(ext_file):
             list_files_found.append(x)
     
-    logger.info("Sample: %s fire threads for all the regions" %ID)
+    #dividing work into 32 parts per cram file
+    logger.info("Sample: %s firing 32 threads per cram file for all the regions" %ID)
     fired_cram_thread=[]
     for thread_list in range(0,len(list_files_found),1):
         read_file_name =ID+"."+list_files_found[thread_list]+'.readcount.out'
@@ -88,7 +91,9 @@ def parse_bam_readcout_data(bamcram,ID,path_lists):
     patient_thread_frame=[]
     for thread_per_bamcram in fired_cram_thread:
         patient_thread_frame.append(thread_per_bamcram.join())   
-    logger.info("Sample: %s joining threads " %ID)
+    logger.info("Sample: %s joining threads for this cram file " %ID)
+
+    #joining results from threads together
     df_readcount = pd.concat(patient_thread_frame)
     df_readcount.sort_values(by='start', ascending=False)
 
@@ -97,6 +102,7 @@ def parse_bam_readcout_data(bamcram,ID,path_lists):
 
 def main():
 
+    #setting up logger variable
     logger_time=datetime.now().strftime("%Y_%m_%d-%I_%M_%S_%p")
     name='tumor.'+str(logger_time)+'.loh.log'
     logger_time=datetime.now().strftime("%Y_%m_%d-%I_%M_%S_%p")
@@ -110,12 +116,12 @@ def main():
     sample_array=[]
     
     cram_files = args.patientbamcrams
-    
+    #check if user provided identifers for each cram file or not
     if (args.bamcramsampleID):
         logger.info('User provided identifers for bam/cram files') 
         sample_array = args.bamcramsampleID
         if len(sample_array) != len(cram_files):
-            logger.critical("provide same number of identifiers as to bam/cram files")
+            logger.Exception("provide same number of identifiers as to bam/cram files")
         logger.info("Using user provided enums: %s " % sample_array)
         
     else:
@@ -137,6 +143,7 @@ def main():
     fired_threads=[]
     patient_tumor_df=[]
     
+    #Firing threads per cram file provided by the user
     for index,file_address in enumerate(cram_files):
         logger.info("Firing thread for %s  " % file_address)
         fire_thread = CustomThread(target=parse_bam_readcout_data, args=(file_address,sample_array[index],args.list))
@@ -148,18 +155,12 @@ def main():
     for thread_running in fired_threads:
         patient_tumor_df=thread_running.join()
         merge_dataframe = pd.merge(merge_dataframe, patient_tumor_df, how="inner", on=["chr", "start", "ref", "alt"])
-    logger.info("Joined all cram file based threads")
+    logger.info("Joined all cram file based threads and merged data")
 
     # output_file in tsv format
     loh_output_file_name = args.sampleid + ".loh.out.tsv"
+    logger.info("Writing loh app output file")
     merge_dataframe.to_csv(loh_output_file_name, sep="\t", index=False)      
     
 if __name__ == "__main__":
     main()
-    #
-#    os.remove(args.tsv)
-#    for list_file in os.listdir(args.list): # deleting files from the tmp folder
-#        print(list_file)
-#        if list_file.endswith(".list"):
-#            os.remove(list_file)
-    #os.remove(*+"."+args.sampleid+".list")

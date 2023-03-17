@@ -1,0 +1,17 @@
+bamscrams:
+        - {class: File, path: BS_EZ5MKVF0.cram }
+        - {class: File, path: BS_XPQDZQXN.cram } 
+reference:
+  class: File
+  path: Homo_sapiens_assembly38.fasta
+sample_vcf_file:
+  class: File
+  path: BS_EZ5MKVF0_50000.vcf.gz
+BS_ID: "BS_EZ5MKVF0"
+bamcramsampleID: ['BS_EZ5MKVF0', 'BS_XPQDZQXN']
+minDepth: 1
+frequency: 0.01
+ram: 16
+output_file:
+  class: File
+  path: "BS_EZ5MKVF0.patient.loh.out.tsv"

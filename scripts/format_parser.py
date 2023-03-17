@@ -4,12 +4,10 @@ import re
 import gzip
 import logging
 from threading import Thread
-import concurrent.futures
-from concurrent.futures import ThreadPoolExecutor
-from multiprocessing import get_context
+
 class CustomThread(Thread):
     #overriding join function in standard threads
-    #With this in place join function with return the output
+    #With this in place join function will return data structure from the function 
     def __init__(self, group=None, target=None, name=None,args=(), kwargs={}, Verbose=None):
         Thread.__init__(self, group, target, name, args, kwargs)
         self._return = None
@@ -143,11 +141,6 @@ def extract_format_fields_vcf(lines, header):
                     modifier = fields.index("MODIFIER")
                     gene = split[modifier + 1]     
     return gene
-'''
-def manage_threadwise_computing(list_format_field,CSQ_header):
-    gene_list_thread=[ extract_format_fields_vcf(line,CSQ_header) for line in list_format_field ]
-    return gene_list_thread    
-'''
 
 def read_vcf_gene_list(file):
     """Returns list of gene for variants called within the vcf file
@@ -158,7 +151,7 @@ def read_vcf_gene_list(file):
     """
     gene_list = []
     vcf_calls = []
-    
+
     chunks=8 #fire 25 threads at a time
 
     with (gzip.open if file.endswith("gz") else open)(file, "rt") as f:
@@ -179,36 +172,7 @@ def read_vcf_gene_list(file):
        #     gene_list.append(extract_format_fields_vcf(line,CSQ_header))
         gene_list=[extract_format_fields_vcf(line,CSQ_header) for line in f]    
             #vcf_calls.append(line.split("\t")[7])
-    '''
-    fired_threads=[]
-    gene_thread_list=[]
-    #divide gene list into chunks to speed up         
-    list_df = [vcf_calls[i:i+chunks] for i in range(0,len(vcf_calls),chunks)] 
-    
-    for list_format_field in list_df:
-        fire_thread = CustomThread(target=manage_threadwise_computing, args=(list_format_field,CSQ_header))
-        fire_thread.start()
-        fired_threads.append(fire_thread) 
-    for running_threads in fired_threads:
-        gene_thread_list.append(running_threads.join())  
-            #gene_list.append(extract_format_fields_vcf(line.split("\t")[7], CSQ_header))
-    '''
-    '''
-    # create a start process context
-    context = get_context('forkserver')
-    #with concurrent.futures.ThreadPoolExecutor() as executor:
-    with concurrent.futures.ProcessPoolExecutor(mp_context=context,max_workers=chunks) as executor:
-        processes = []
-        
-        for list_format_field in list_df:
-            processes.append(executor.submit(manage_threadwise_computing, list_format_field,CSQ_header))
-        for run_process in processes:
-            gene_thread_list.append(run_process.result())
-    
-    #flatten the list received from threads        
-    gene_list = [item for sublist in gene_thread_list for item in sublist]
-    '''
-    
+
     return gene_list
 
 def extract_BS_id_peddy_file(peddy_file,column_label):

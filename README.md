@@ -20,7 +20,7 @@ Here are the basic steps for the LOH assessment workflow:
 
 ### Cavatica Application
 
-This workflow has been deployed over [cavatica](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/apps/Loss_of_Heterozygosity) with a [test run](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/tasks/89708628-085f-40ce-a15b-2d850d81eead/)
+This workflow has been deployed on [cavatica](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/apps/Loss_of_Heterozygosity) with a [test run](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/tasks/89708628-085f-40ce-a15b-2d850d81eead/)
 
 ### Running it locally on a laptop?
 

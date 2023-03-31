@@ -32,7 +32,7 @@ arguments:
   shellQuote: false      
 
 inputs: 
-  bs_id: { doc: provide sample id for this run, type: string, inputBinding: { prefix: --sampleid, position: 2} }
+  participant_id: { doc: provide sample id for this run, type: string, inputBinding: { prefix: --participantid, position: 2} }
   germline_file: { doc: provide germline output, type: File, inputBinding: { prefix: --tsv, position: 2 } }
   list_dir: { doc: directory with regions stored as lists to run within bam/crams using bamreadcount , type: Directory, inputBinding: { prefix: --list_dir, position: 2 } }
   minDepth: { doc: provide minDepth to consider for tumor reads, type: int, default: 1, inputBinding: { prefix: --minDepth, position: 2} } 
@@ -45,7 +45,7 @@ outputs:
    loh_output_file_tool:
     type: File
     outputBinding:
-     glob: $(inputs.bs_id)*loh.out.tsv
+     glob: $(inputs.participantid)*loh.out.tsv
     doc: output file required from LOH app
    log_output:
     type: File

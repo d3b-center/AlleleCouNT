@@ -16,7 +16,7 @@ import logging
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--tsv", help="bcftool output file in tsv format")
-parser.add_argument("--sampleid", help="patient primary sampleid for this run")
+parser.add_argument("--participant_id", help="patient participant id for this run")
 parser.add_argument("--reference", help="human reference")
 parser.add_argument(
     "--patientbamcrams",
@@ -100,7 +100,7 @@ def parse_bam_readcout_data(bamcram, ID, path_lists):
         for i in headers
     ]  # prepare headers for parental dataframes
 
-    ext_file = args.sampleid + ".list"
+    ext_file = ".list"
 
     current_path = os.getcwd()
     list_dir_path = path_lists
@@ -218,12 +218,11 @@ def main():
     logger.info("Joined all cram file based threads and merged data")
 
     # output_file in tsv format
-    loh_output_file_name = args.sampleid + ".loh.out.tsv"
+    loh_output_file_name = args.participant_id + ".germline.tumor.loh.out.tsv"
     logger.info("Writing loh app output file")
     merge_dataframe.to_csv(loh_output_file_name, sep="\t", index=False)
 
     logger.info("Tumor tool run sucessfully")
-
 
 if __name__ == "__main__":
     main()

@@ -18,7 +18,7 @@ parser = argparse.ArgumentParser()
 
 # Adding optional argument
 parser.add_argument("-i", "--input", help="provide sample vcf file")
-parser.add_argument("-id", "--sampleid", help="provide sample ID")
+parser.add_argument("-id", "--sampleid", help="provide sample ID for germline vcf")
 parser.add_argument("-freq", "--frequency", help="Frequency cutoff for popmax")
 parser.add_argument("-ped", "--peddy", help="Peddy file")
 

@@ -32,7 +32,7 @@ arguments:
   shellQuote: false      
 
 inputs: 
-  participant_id: { doc: provide participant id for this run, type: string, inputBinding: { prefix: --participantid, position: 2} }
+  participant_id: { doc: provide participant id for this run, type: string, inputBinding: { prefix: --participant_id, position: 2} }
   germline_file: { doc: provide germline output, type: File, inputBinding: { prefix: --tsv, position: 2 } }
   list_dir: { doc: directory with regions stored as lists to run within bam/crams using bamreadcount , type: Directory, inputBinding: { prefix: --list_dir, position: 2 } }
   minDepth: { doc: provide minDepth to consider for tumor reads, type: int, default: 1, inputBinding: { prefix: --minDepth, position: 2} } 

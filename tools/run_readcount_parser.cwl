@@ -45,7 +45,7 @@ outputs:
    loh_output_file_tool:
     type: File
     outputBinding:
-     glob: $(inputs.participantid)*loh.out.tsv
+     glob: $(inputs.participant_id)*loh.out.tsv
     doc: output file required from LOH app
    log_output:
     type: File

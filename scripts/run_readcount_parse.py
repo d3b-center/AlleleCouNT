@@ -69,13 +69,13 @@ def worker(region_list, bamcram, read_file_name, ID, headers):
         list_data, columns=headers
     )  # convert to pandas with headers
 
-    target_header = "proband_" + ID + "_tumor_depth"
-    first_header = "proband_" + ID + "_tumor_ref_depth"
+    first_header = "proband_" + ID + "_tumor_depth"
+    target_header = "proband_" + ID + "_tumor_ref_depth"
     second_header = "proband_" + ID + "_tumor_alt_depth"
 
     df_readcount_thread[target_header] = df_readcount_thread[first_header].astype(
         int
-    ) + df_readcount_thread[second_header].astype(int)
+    ) - df_readcount_thread[second_header].astype(int)
     os.remove(read_file_name)
 
     return df_readcount_thread
@@ -91,8 +91,8 @@ def parse_bam_readcout_data(bamcram, ID, path_lists):
         "ref",
         "alt",
         "tumor_vaf",
+        "tumor_depth",
         "tumor_alt_depth",
-        "tumor_ref_depth",
     ]  # tumor headers
 
     headers = [

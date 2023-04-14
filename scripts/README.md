@@ -25,23 +25,25 @@ optional arguments:
 
 Tumor tool search in a paired tumor sample (example match to above germline) and, if given, parental germline samples, for the same variant and calculate the VAF and creates an output file with (BS_id, gene, chr, start, stop, ref/alt alleles, ref/alt allele depths, VAF) for each of: proband germline, proband tumor, paternal germline, maternal germline
 
-(Optional) This tool has the ability to analyze LOH for trios too with multiple tumor samples.
+(Optional) This tool has the ability to analyze LOH for trios samples with multiple tumor samples.
 
 ```
 python3 run_readcount_parse.py --help
-usage: run_readcount_parse.py [-h] [--tsv TSV] [--sampleid SAMPLEID] [--reference REFERENCE]
+usage: run_readcount_parse.py [-h] [--tsv TSV] [--participant_id PARTICIPANTID]
+                              [--reference REFERENCE]
                               [--patientbamcrams PATIENTBAMCRAMS [PATIENTBAMCRAMS ...]] [--list LIST] [--peddy PEDDY]
                               [--minDepth MINDEPTH] [--bamcramsampleID BAMCRAMSAMPLEID [BAMCRAMSAMPLEID ...]]
 
-optional arguments:
+Required arguments:
   -h, --help            show this help message and exit
   --tsv TSV             bcftool output file in tsv format
-  --sampleid SAMPLEID   patient primary sampleid for this run
-  --reference REFERENCE
-                        human reference
+  --participant_id PARTICIPANTID   patient participant_id for this run
+  --reference REFERENCE Human reference
+  --list LIST           path to directory containing regions created by germline run to consider in tumor
+
+Optional arguments:
   --patientbamcrams PATIENTBAMCRAMS [PATIENTBAMCRAMS ...]
                         provide one or more bam/cram file for patient tumor
-  --list LIST           path to directory containing regions created by germline run to consider in tumor
   --peddy PEDDY         peddy file containing parental information
   --minDepth MINDEPTH   min tumor depth required to be consider for tumor output
   --bamcramsampleID BAMCRAMSAMPLEID [BAMCRAMSAMPLEID ...]

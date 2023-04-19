@@ -31,7 +31,7 @@ Note: Inputs to the workflow need to be defined in sample_input.yml.
 ### Output headers
 
 | Header | Description | 
-|:-------|--------:|
+|:-------:|:--------:|
 | BS_ID | Sample Id for germline sample | 
 | gene | Gene |
 | chr | Chromosome |

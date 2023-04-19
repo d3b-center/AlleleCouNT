@@ -1,6 +1,6 @@
 # D3B:Loss of Heterozygosity (LOH)
 
-This CWL workflow assesses the loss of heterozygosity(LOH) in the tumor for rare germline variants (gnomad_3_1_1_AF_popmax < 0.01). This workflow has been deployed on [cavatica](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/apps/Loss_of_Heterozygosity) with a [proband only run](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/tasks/89708628-085f-40ce-a15b-2d850d81eead/) and a [trio run](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/tasks/d7f6b667-35ef-46a7-a666-970a78ef3175/)
+This CWL workflow assesses the loss of heterozygosity(LOH) in the tumor for rare germline variants (gnomad_3_1_1_AF_popmax < 0.01). This workflow has been deployed on [cavatica](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/apps/Loss_of_Heterozygosity) with a [proband only run](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/tasks/522d128a-2195-4c9c-8339-1709da16821d/) and a [trio run](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/tasks/d7f6b667-35ef-46a7-a666-970a78ef3175/)
 
 ### Repo Description
 
@@ -41,8 +41,8 @@ LOH workflow will generate a output file with following headers:
 | alt | Alternate Allele |
 | proband_germline_ref_depth | Reference depth from germline for proband |
 | proband_germline_alt_depth | Alternate depth from germline for proband |
-| proband_germline_depth | total number of reads overlapping a site for proband  |
-| proband_germline_vaf | The fraction of reads with the alternate allele for proband |
+| proband_germline_depth | Total number of reads overlapping a site for proband  |
+| proband_germline_vaf | Fraction of reads with the alternate allele for proband |
 | paternal_germline_ref_depth | Reference depth from germline for father |
 | paternal_germline_alt_depth | Alternate depth from germline for father |
 | paternal_germline_depth | Total number of reads overlapping a site for father |
@@ -51,7 +51,7 @@ LOH workflow will generate a output file with following headers:
 | maternal_germline_alt_depth | Alternate depth from germline for mother |
 | maternal_germline_depth | Total number of reads overlapping a site for mother  |
 | maternal_germline_vaf | Fraction of reads with the alternate allele for mother |
-| proband_Sample_ID_tumor_vaf | Variant Allele frequency from tumor for proband for specific tumor sample|
-| proband_Sample_ID_tumor_depth | Depth of coverage for specific tumor sample | 
-| proband_Sample_ID_tumor_alt_depth | Allele count at site for proband for specific tumor sample|
-| proband_Sample_ID_tumor_ref_depth | Reference count at site for proband for specific tumor sample |
+| proband_sample_id_tumor_vaf | Variant Allele frequency from tumor for proband for specific tumor sample|
+| proband_sample_id_tumor_depth | Depth of coverage for specific tumor sample | 
+| proband_sample_id_tumor_alt_depth | Allele count at site for proband for specific tumor sample|
+| proband_sample_id_tumor_ref_depth | Reference count at site for proband for specific tumor sample |

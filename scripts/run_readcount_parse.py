@@ -218,11 +218,12 @@ def main():
     logger.info("Joined all cram file based threads and merged data")
 
     # output_file in tsv format
-    loh_output_file_name = args.participant_id + ".germline.tumor.loh.out.tsv"
+    loh_output_file_name = args.participant_id + ".germline.tumor.version2.loh.out.tsv"
     logger.info("Writing loh app output file")
     merge_dataframe.to_csv(loh_output_file_name, sep="\t", index=False)
 
     logger.info("Tumor tool run sucessfully")
+
 
 if __name__ == "__main__":
     main()

@@ -34,14 +34,6 @@ def organize_clean_dataframe(bcftool_tsv, gene, args):
     """
     bcftool_tsv["gene"] = gene
 
-    # remove entries with . as popmax
-    bcftool_tsv = bcftool_tsv[bcftool_tsv.popmax != "."]
-    bcftool_tsv["popmax"] = bcftool_tsv["popmax"].astype(float)
-
-    # set criteria for rare variant
-    bcftool_tsv = bcftool_tsv[bcftool_tsv.popmax < float(args.frequency)]
-    bcftool_tsv = bcftool_tsv.drop(["popmax"], axis=1)  # not required anymore
-
     # split columns
     bcftool_tsv[
         ["proband_germline_ref_depth", "proband_germline_alt_depth"]
@@ -81,10 +73,6 @@ def main():
     )
     # no_samples_vcf=samples_vcfs.count('\n')+1
 
-    # extract gene list from vcf file
-    logger.info("Extracting genes from vcf file")
-    gene = read_vcf_gene_list(args.input)
-
     sample_list = args.sampleid
     if args.peddy:  # check peddy file provided
         logger.info("Reading peddy file")
@@ -101,38 +89,57 @@ def main():
             logger.info("Maternal IDs found")
             sample_list = sample_list + "," + maternal_id
 
+    logger.info("Running bcftool to filter")
+    filter_criteria = "'gnomad_3_1_1_AF<" + args.frequency + ' | gnomad_3_1_1_AF="."\''
+
+    cmd_bcftools_filter = (
+        "bcftools filter -O z -i " + filter_criteria + " " + args.input
+    )
+    cmd_bcftools_filter_vcf = (
+        "bcftools filter -O z -o tmp_filtered_calls.vcf.gz -i "
+        + filter_criteria
+        + " "
+        + args.input
+    )
+
+    filter = subprocess.Popen(cmd_bcftools_filter, shell=True, stdout=subprocess.PIPE)
+    subprocess.run(cmd_bcftools_filter_vcf, shell=True)
+
     logger.info("Running bcftool plugin to add VAF")
-    cmd_bcftools_tags = "bcftools +fill-tags " + args.input + " -- -t FORMAT/VAF"
-    plugin = subprocess.Popen(cmd_bcftools_tags, shell=True, stdout=subprocess.PIPE)
+    cmd_bcftools_tags = "bcftools +fill-tags -- -t FORMAT/VAF"
+    plugin = subprocess.Popen(
+        cmd_bcftools_tags, shell=True, stdout=subprocess.PIPE, stdin=filter.stdout
+    )
 
     logger.info("Running bcftool to extract data from vcf file into a tmp file")
     cmd_bcftools_test = (
-        "bcftools query -f '%gnomad_3_1_1_AF\t%CHROM\t%POS\t%END\t%REF\t%ALT\t[%AD\t][%DP\t][%VAF\t]\n' --samples "
+        "bcftools query -f '%CHROM\t%POS\t%END\t%REF\t%ALT\t[%AD\t][%DP\t][%VAF\t]\n' --samples "
         + sample_list
         + " "
         + "-o tmp_bcftool_germline.tsv"
     )
     subprocess.run(cmd_bcftools_test, shell=True, stdin=plugin.stdout)
 
+    # extract gene list from vcf file
+    logger.info("Extracting genes from vcf file")
+    gene = read_vcf_gene_list("tmp_filtered_calls.vcf.gz")
+
     # read tsv file from bcftools
     my_file = Path("tmp_bcftool_germline.tsv")
     if my_file.is_file():
         logger.info("Reading tmp file from bcftool")
-        bcftool_tsv = pd.read_csv(
-            "tmp_bcftool_germline.tsv", sep="\t", low_memory=False
-        )
+        bcftool_tsv = pd.read_csv(my_file, sep="\t", low_memory=False)
         del bcftool_tsv[bcftool_tsv.columns[-1]]  # remove last  empty columns
     else:
         logger.Exception(
             "Incorrect sample ID or vcf.gz file provided! Please check the inputs"
         )
-
+    print(bcftool_tsv.shape)
     if args.peddy:
         if (
             paternal_id and maternal_id
         ):  # when paternal, maternal id found within peddy file
             bcftool_tsv.columns = [
-                "popmax",
                 "chr",
                 "start",
                 "end",
@@ -194,7 +201,6 @@ def main():
 
         elif maternal_id:  # when maternal id found within peddy file
             bcftool_tsv.columns = [
-                "popmax",
                 "chr",
                 "start",
                 "end",
@@ -240,7 +246,6 @@ def main():
             ].round(2)
         elif paternal_id:  # when paternal id found within peddy file
             bcftool_tsv.columns = [
-                "popmax",
                 "chr",
                 "start",
                 "end",
@@ -292,7 +297,6 @@ def main():
             # set up pandas dataframe
             logger.info("No parental, maternal found in the peddy file")
             bcftool_tsv.columns = [
-                "popmax",
                 "chr",
                 "start",
                 "end",
@@ -327,7 +331,6 @@ def main():
         logger.warning("No peddy file found")
         # set up pandas dataframe
         bcftool_tsv.columns = [
-            "popmax",
             "chr",
             "start",
             "end",
@@ -338,9 +341,7 @@ def main():
             "proband_germline_vaf",
         ]
 
-        logger.info(
-            "applying popmax filter and preparing patient data for final germline output"
-        )
+        logger.info("preparing patient data for final germline output")
         bcftool_data_processed = organize_clean_dataframe(bcftool_tsv, gene, args)
 
         bcftool_data_processed = bcftool_data_processed[
@@ -395,6 +396,7 @@ def main():
     # remove tmp file
     logger.info("Removing tmp file")
     os.remove("tmp_bcftool_germline.tsv")
+    os.remove("tmp_filtered_calls.vcf.gz")
 
     logger.info("Germline tool run sucessfully")
 

@@ -20,6 +20,7 @@ inputs:
   bamcramsampleIDs: { doc: provide unique identifers (in the same order) for cram/bam files provided under bamcrams tag. Default is sample ID pulled from bam/cram files., type: 'string[]?' }
   ram_germline: {  doc: Provide ram (in GB) based on the size of vcf,type: 'int?', default: 8} 
   ram_tumor: {  doc: Provide ram (in GB) size and number of cram/bam inputs, type: 'int?', default: 16} 
+  minCore: { type: 'int?', default: 16, doc: "Minimum number of cores for tumor tool" }
 outputs:
   output_file: { type: File, doc: output file from LOH app, outputSource: run_readcount_parser/loh_output_file_tool }
 
@@ -46,5 +47,6 @@ steps:
       peddy: peddy_file
       bamcramsampleID: bamcramsampleIDs
       ram: ram_tumor
+      minCore: minCore
     out:
       [ loh_output_file_tool,log_output ]

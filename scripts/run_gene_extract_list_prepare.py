@@ -370,7 +370,7 @@ def main():
     list_readcount.rename(columns={"chr": "chromosome"})
 
     # split DataFrame into chunks
-    chunks = math.floor(len(list_readcount) / 31) + 1  # Number of lists
+    chunks = math.floor(len(list_readcount) / 63) + 1  # Number of lists
     dirName = "tmp_list"
     current_path = os.getcwd()
     list_dir_path = os.path.join(current_path, dirName)

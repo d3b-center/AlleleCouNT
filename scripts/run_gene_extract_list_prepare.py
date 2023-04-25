@@ -10,6 +10,7 @@ from datetime import datetime
 import pandas as pd
 from format_parser import read_vcf_gene_list
 from format_parser import extract_BS_id_peddy_file
+import warnings
 
 
 # coding=utf8
@@ -22,6 +23,8 @@ parser.add_argument("-id", "--sampleid", help="provide sample ID for germline vc
 parser.add_argument("-freq", "--frequency", help="Frequency cutoff for popmax")
 parser.add_argument("-ped", "--peddy", help="Peddy file")
 
+#suppress pandas future warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def organize_clean_dataframe(bcftool_tsv, gene, args):
     """Returns germline output as pandas dataframe
@@ -91,7 +94,7 @@ def main():
 
     logger.info("Running bcftool to filter")
     filter_criteria = "'gnomad_3_1_1_AF<" + args.frequency + ' | gnomad_3_1_1_AF="."\''
-
+    
     cmd_bcftools_filter = (
         "bcftools filter -O z -i " + filter_criteria + " " + args.input
     )
@@ -134,7 +137,7 @@ def main():
         logger.Exception(
             "Incorrect sample ID or vcf.gz file provided! Please check the inputs"
         )
-    print(bcftool_tsv.shape)
+
     if args.peddy:
         if (
             paternal_id and maternal_id

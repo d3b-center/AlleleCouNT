@@ -13,7 +13,7 @@ Here are the basic steps for the LOH assessment workflow:
 * Filter germline annotations to retain variants with gnomad_3_1_1_AF_popmax < 0.01 or gnomad_3_1_1_AF_popmax not defined performed by the germline tool (this gets us rare germline variants).
 * Gather variant information (gene, chr, start, stop, ref/alt alleles, ref/alt allele depths, VAF) covered by the germline tool.
 * Search in a paired tumor sample (example match to above germline) and, if applicable, parental germline samples, for the same variant and calculate the VAF covered by tumor tool.
-* Create an output file with (BS_id, gene, chr, start, stop, ref/alt alleles, ref/alt allele depths, VAF) for each of: proband germline, proband tumor, paternal germline, maternal germline covered by the tumor tool.
+* LOH will create an output file with headers (BS_id, gene, chr, start, stop, ref/alt alleles, ref/alt allele depths, VAF) for each of: proband germline, proband tumor, paternal germline, maternal germline covered by the tumor tool.
 
 
 (Optional) This workflow has the ability to analyze LOH for trios, with multiple tumor samples. The input requirement for trios is a trio vcf, a peddy file, and a tumor cram file for the proband. Note: The user can provide multiple.cram or.bam files as needed.

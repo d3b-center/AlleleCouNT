@@ -223,6 +223,10 @@ def main():
     logger.info("Joined all cram file based threads and merged data")
     # output_file in tsv format
     loh_output_file_name = args.participant_id + ".germline.tumor.version2.loh.out.tsv"
+
+    logger.info("Dropping merge duplicates")
+    merge_dataframe.drop_duplicates(inplace=True)
+
     logger.info("Writing loh app output file")
     merge_dataframe.to_csv(loh_output_file_name, sep="\t", index=False)
 

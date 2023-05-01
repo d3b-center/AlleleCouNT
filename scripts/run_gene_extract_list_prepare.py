@@ -27,6 +27,19 @@ parser.add_argument("-ped", "--peddy", help="Peddy file")
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
 
+def standard_headers():
+    return [
+        "chr",
+        "start",
+        "end",
+        "ref",
+        "alt",
+        "ref,alt depth",
+        "proband_germline_depth",
+        "proband_germline_vaf",
+    ]
+
+
 def organize_clean_dataframe(bcftool_tsv, gene, args):
     """Returns germline output as pandas dataframe
     Args:
@@ -143,22 +156,15 @@ def main():
         if (
             paternal_id and maternal_id
         ):  # when paternal, maternal id found within peddy file
-            bcftool_tsv.columns = [
-                "chr",
-                "start",
-                "end",
-                "ref",
-                "alt",
-                "ref,alt depth",
-                "ref,alt depth_paternal",
-                "ref,alt depth_maternal",
-                "proband_germline_depth",
-                "paternal_germline_depth",
-                "maternal_germline_depth",
-                "proband_germline_vaf",
-                "paternal_germline_vaf",
-                "maternal_germline_vaf",
-            ]
+            Germline_Headers = standard_headers()
+            Germline_Headers.insert(6, "ref,alt depth_paternal")
+            Germline_Headers.insert(7, "ref,alt depth_maternal")
+            Germline_Headers.insert(9, "paternal_germline_depth")
+            Germline_Headers.insert(10, "maternal_germline_depth")
+            Germline_Headers.insert(12, "paternal_germline_vaf")
+            Germline_Headers.insert(13, "maternal_germline_vaf")
+            bcftool_tsv.columns = Germline_Headers
+
             # split columns
             bcftool_tsv[
                 ["paternal_ref_depth_germline", "paternal_alt_depth_germline"]
@@ -203,20 +209,13 @@ def main():
                 "maternal_germline_vaf"
             ].round(2)
 
-        elif maternal_id:  # when maternal id found within peddy file
-            bcftool_tsv.columns = [
-                "chr",
-                "start",
-                "end",
-                "ref",
-                "alt",
-                "ref,alt depth",
-                "ref,alt depth_maternal",
-                "proband_germline_depth",
-                "maternal_germline_depth",
-                "proband_germline_vaf",
-                "maternal_germline_vaf",
-            ]
+        elif maternal_id:  # when only maternal id found within peddy file
+            Germline_Headers = standard_headers()
+            Germline_Headers.insert(6, "ref,alt depth_maternal")
+            Germline_Headers.insert(8, "maternal_germline_depth")
+            Germline_Headers.insert(10, "maternal_germline_vaf")
+            bcftool_tsv.columns = Germline_Headers
+
             bcftool_tsv[
                 ["maternal_ref_depth_germline", "maternal_alt_depth_germline"]
             ] = bcftool_tsv["ref,alt depth_maternal"].str.split(",", 1, expand=True)
@@ -249,19 +248,12 @@ def main():
                 "maternal_germline_vaf"
             ].round(2)
         elif paternal_id:  # when paternal id found within peddy file
-            bcftool_tsv.columns = [
-                "chr",
-                "start",
-                "end",
-                "ref",
-                "alt",
-                "ref,alt depth",
-                "ref,alt depth_paternal",
-                "proband_germline_depth",
-                "paternal_germline_depth",
-                "proband_germline_vaf",
-                "paternal_germline_vaf",
-            ]
+            Germline_Headers = standard_headers()
+            Germline_Headers.insert(6, "ref,alt depth_paternal")
+            Germline_Headers.insert(8, "paternal_germline_depth")
+            Germline_Headers.insert(10, "paternal_germline_vaf")
+            bcftool_tsv.columns = Germline_Headers
+
             bcftool_tsv[
                 ["paternal_ref_depth_germline", "paternal_alt_depth_germline"]
             ] = bcftool_tsv["ref,alt depth_paternal"].str.split(",", 1, expand=True)
@@ -300,16 +292,7 @@ def main():
         else:  # prepare output when no parental info is found within peddy file
             # set up pandas dataframe
             logger.info("No parental, maternal found in the peddy file")
-            bcftool_tsv.columns = [
-                "chr",
-                "start",
-                "end",
-                "ref",
-                "alt",
-                "ref,alt depth",
-                "proband_germline_depth",
-                "proband_germline_vaf",
-            ]
+            bcftool_tsv.columns = standard_headers()
 
             logger.info(
                 "applying popmax filter and preparing patient data for final germline output"
@@ -334,16 +317,7 @@ def main():
     else:  # prepare output when peddy file is not found
         logger.warning("No peddy file found")
         # set up pandas dataframe
-        bcftool_tsv.columns = [
-            "chr",
-            "start",
-            "end",
-            "ref",
-            "alt",
-            "ref,alt depth",
-            "proband_germline_depth",
-            "proband_germline_vaf",
-        ]
+        bcftool_tsv.columns = standard_headers()
 
         logger.info("preparing patient data for final germline output")
         bcftool_data_processed = organize_clean_dataframe(bcftool_tsv, gene, args)
@@ -372,7 +346,9 @@ def main():
 
     list_readcount = bcftool_data_processed[["chr", "start", "end"]]
     list_readcount.rename(columns={"chr": "chromosome"})
-    list_readcount["end"] = list_readcount["end"] + 1
+    list_readcount["end"] = (
+        list_readcount["end"] + 1
+    )  # carry next position for bam-readcount
     # split DataFrame into chunks
     chunks = math.floor(len(list_readcount) / 31) + 1  # Number of lists
     dirName = "tmp_list"
@@ -397,6 +373,7 @@ def main():
         list_out_name = str(index) + "." + list_output_file_name
         fullname = os.path.join(dirName, list_out_name)
         list_chunk.to_csv(fullname, sep="\t", index=False)
+
     # remove tmp file
     logger.info("Removing tmp file")
     os.remove("tmp_bcftool_germline.tsv")

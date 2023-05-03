@@ -8,8 +8,9 @@ from pathlib import Path
 import logging
 from datetime import datetime
 import pandas as pd
-from format_parser import read_vcf_gene_list
-from format_parser import extract_BS_id_peddy_file
+from loh_functions import read_vcf_gene_list
+from loh_functions import extract_BS_id_peddy_file
+import warnings
 
 
 # coding=utf8
@@ -22,6 +23,22 @@ parser.add_argument("-id", "--sampleid", help="provide sample ID for germline vc
 parser.add_argument("-freq", "--frequency", help="Frequency cutoff for popmax")
 parser.add_argument("-ped", "--peddy", help="Peddy file")
 
+# suppress pandas future warnings
+warnings.simplefilter(action="ignore", category=FutureWarning)
+
+
+def standard_headers():
+    return [
+        "chr",
+        "start",
+        "end",
+        "ref",
+        "alt",
+        "ref,alt depth",
+        "proband_germline_depth",
+        "proband_germline_vaf",
+    ]
+
 
 def organize_clean_dataframe(bcftool_tsv, gene, args):
     """Returns germline output as pandas dataframe
@@ -33,14 +50,6 @@ def organize_clean_dataframe(bcftool_tsv, gene, args):
         Returns germline output as pandas dataframe
     """
     bcftool_tsv["gene"] = gene
-
-    # remove entries with . as popmax
-    bcftool_tsv = bcftool_tsv[bcftool_tsv.popmax != "."]
-    bcftool_tsv["popmax"] = bcftool_tsv["popmax"].astype(float)
-
-    # set criteria for rare variant
-    bcftool_tsv = bcftool_tsv[bcftool_tsv.popmax < float(args.frequency)]
-    bcftool_tsv = bcftool_tsv.drop(["popmax"], axis=1)  # not required anymore
 
     # split columns
     bcftool_tsv[
@@ -81,10 +90,6 @@ def main():
     )
     # no_samples_vcf=samples_vcfs.count('\n')+1
 
-    # extract gene list from vcf file
-    logger.info("Extracting genes from vcf file")
-    gene = read_vcf_gene_list(args.input)
-
     sample_list = args.sampleid
     if args.peddy:  # check peddy file provided
         logger.info("Reading peddy file")
@@ -101,26 +106,46 @@ def main():
             logger.info("Maternal IDs found")
             sample_list = sample_list + "," + maternal_id
 
+    logger.info("Running bcftool to filter")
+    filter_criteria = "'gnomad_3_1_1_AF<" + args.frequency + ' | gnomad_3_1_1_AF="."\''
+
+    cmd_bcftools_filter = (
+        "bcftools filter -O z -i " + filter_criteria + " " + args.input
+    )
+    cmd_bcftools_filter_vcf = (
+        "bcftools filter -O z -o tmp_filtered_calls.vcf.gz -i "
+        + filter_criteria
+        + " "
+        + args.input
+    )
+
+    filter = subprocess.Popen(cmd_bcftools_filter, shell=True, stdout=subprocess.PIPE)
+    subprocess.run(cmd_bcftools_filter_vcf, shell=True)
+
     logger.info("Running bcftool plugin to add VAF")
-    cmd_bcftools_tags = "bcftools +fill-tags " + args.input + " -- -t FORMAT/VAF"
-    plugin = subprocess.Popen(cmd_bcftools_tags, shell=True, stdout=subprocess.PIPE)
+    cmd_bcftools_tags = "bcftools +fill-tags -- -t FORMAT/VAF"
+    plugin = subprocess.Popen(
+        cmd_bcftools_tags, shell=True, stdout=subprocess.PIPE, stdin=filter.stdout
+    )
 
     logger.info("Running bcftool to extract data from vcf file into a tmp file")
     cmd_bcftools_test = (
-        "bcftools query -f '%gnomad_3_1_1_AF\t%CHROM\t%POS\t%END\t%REF\t%ALT\t[%AD\t][%DP\t][%VAF\t]\n' --samples "
+        "bcftools query -f '%CHROM\t%POS\t%END\t%REF\t%ALT\t[%AD\t][%DP\t][%VAF\t]\n' --samples "
         + sample_list
         + " "
         + "-o tmp_bcftool_germline.tsv"
     )
     subprocess.run(cmd_bcftools_test, shell=True, stdin=plugin.stdout)
 
+    # extract gene list from vcf file
+    logger.info("Extracting genes from vcf file")
+    gene = read_vcf_gene_list("tmp_filtered_calls.vcf.gz")
+
     # read tsv file from bcftools
     my_file = Path("tmp_bcftool_germline.tsv")
     if my_file.is_file():
         logger.info("Reading tmp file from bcftool")
-        bcftool_tsv = pd.read_csv(
-            "tmp_bcftool_germline.tsv", sep="\t", low_memory=False
-        )
+        bcftool_tsv = pd.read_csv(my_file, sep="\t", low_memory=False)
         del bcftool_tsv[bcftool_tsv.columns[-1]]  # remove last  empty columns
     else:
         logger.Exception(
@@ -131,23 +156,15 @@ def main():
         if (
             paternal_id and maternal_id
         ):  # when paternal, maternal id found within peddy file
-            bcftool_tsv.columns = [
-                "popmax",
-                "chr",
-                "start",
-                "end",
-                "ref",
-                "alt",
-                "ref,alt depth",
-                "ref,alt depth_paternal",
-                "ref,alt depth_maternal",
-                "proband_germline_depth",
-                "paternal_germline_depth",
-                "maternal_germline_depth",
-                "proband_germline_vaf",
-                "paternal_germline_vaf",
-                "maternal_germline_vaf",
-            ]
+            Germline_Headers = standard_headers()
+            Germline_Headers.insert(6, "ref,alt depth_paternal")
+            Germline_Headers.insert(7, "ref,alt depth_maternal")
+            Germline_Headers.insert(9, "paternal_germline_depth")
+            Germline_Headers.insert(10, "maternal_germline_depth")
+            Germline_Headers.insert(12, "paternal_germline_vaf")
+            Germline_Headers.insert(13, "maternal_germline_vaf")
+            bcftool_tsv.columns = Germline_Headers
+
             # split columns
             bcftool_tsv[
                 ["paternal_ref_depth_germline", "paternal_alt_depth_germline"]
@@ -192,21 +209,13 @@ def main():
                 "maternal_germline_vaf"
             ].round(2)
 
-        elif maternal_id:  # when maternal id found within peddy file
-            bcftool_tsv.columns = [
-                "popmax",
-                "chr",
-                "start",
-                "end",
-                "ref",
-                "alt",
-                "ref,alt depth",
-                "ref,alt depth_maternal",
-                "proband_germline_depth",
-                "maternal_germline_depth",
-                "proband_germline_vaf",
-                "maternal_germline_vaf",
-            ]
+        elif maternal_id:  # when only maternal id found within peddy file
+            Germline_Headers = standard_headers()
+            Germline_Headers.insert(6, "ref,alt depth_maternal")
+            Germline_Headers.insert(8, "maternal_germline_depth")
+            Germline_Headers.insert(10, "maternal_germline_vaf")
+            bcftool_tsv.columns = Germline_Headers
+
             bcftool_tsv[
                 ["maternal_ref_depth_germline", "maternal_alt_depth_germline"]
             ] = bcftool_tsv["ref,alt depth_maternal"].str.split(",", 1, expand=True)
@@ -239,20 +248,12 @@ def main():
                 "maternal_germline_vaf"
             ].round(2)
         elif paternal_id:  # when paternal id found within peddy file
-            bcftool_tsv.columns = [
-                "popmax",
-                "chr",
-                "start",
-                "end",
-                "ref",
-                "alt",
-                "ref,alt depth",
-                "ref,alt depth_paternal",
-                "proband_germline_depth",
-                "paternal_germline_depth",
-                "proband_germline_vaf",
-                "paternal_germline_vaf",
-            ]
+            Germline_Headers = standard_headers()
+            Germline_Headers.insert(6, "ref,alt depth_paternal")
+            Germline_Headers.insert(8, "paternal_germline_depth")
+            Germline_Headers.insert(10, "paternal_germline_vaf")
+            bcftool_tsv.columns = Germline_Headers
+
             bcftool_tsv[
                 ["paternal_ref_depth_germline", "paternal_alt_depth_germline"]
             ] = bcftool_tsv["ref,alt depth_paternal"].str.split(",", 1, expand=True)
@@ -291,17 +292,7 @@ def main():
         else:  # prepare output when no parental info is found within peddy file
             # set up pandas dataframe
             logger.info("No parental, maternal found in the peddy file")
-            bcftool_tsv.columns = [
-                "popmax",
-                "chr",
-                "start",
-                "end",
-                "ref",
-                "alt",
-                "ref,alt depth",
-                "proband_germline_depth",
-                "proband_germline_vaf",
-            ]
+            bcftool_tsv.columns = standard_headers()
 
             logger.info(
                 "applying popmax filter and preparing patient data for final germline output"
@@ -326,21 +317,9 @@ def main():
     else:  # prepare output when peddy file is not found
         logger.warning("No peddy file found")
         # set up pandas dataframe
-        bcftool_tsv.columns = [
-            "popmax",
-            "chr",
-            "start",
-            "end",
-            "ref",
-            "alt",
-            "ref,alt depth",
-            "proband_germline_depth",
-            "proband_germline_vaf",
-        ]
+        bcftool_tsv.columns = standard_headers()
 
-        logger.info(
-            "applying popmax filter and preparing patient data for final germline output"
-        )
+        logger.info("preparing patient data for final germline output")
         bcftool_data_processed = organize_clean_dataframe(bcftool_tsv, gene, args)
 
         bcftool_data_processed = bcftool_data_processed[
@@ -367,7 +346,9 @@ def main():
 
     list_readcount = bcftool_data_processed[["chr", "start", "end"]]
     list_readcount.rename(columns={"chr": "chromosome"})
-
+    list_readcount["end"] = (
+        list_readcount["end"] + 1
+    )  # carry next position for bam-readcount
     # split DataFrame into chunks
     chunks = math.floor(len(list_readcount) / 31) + 1  # Number of lists
     dirName = "tmp_list"
@@ -392,9 +373,11 @@ def main():
         list_out_name = str(index) + "." + list_output_file_name
         fullname = os.path.join(dirName, list_out_name)
         list_chunk.to_csv(fullname, sep="\t", index=False)
+
     # remove tmp file
     logger.info("Removing tmp file")
     os.remove("tmp_bcftool_germline.tsv")
+    os.remove("tmp_filtered_calls.vcf.gz")
 
     logger.info("Germline tool run sucessfully")
 

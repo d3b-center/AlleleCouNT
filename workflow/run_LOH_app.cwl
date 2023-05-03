@@ -20,11 +20,12 @@ inputs:
   bamcramsampleIDs: { doc: provide unique identifers (in the same order) for cram/bam files provided under bamcrams tag. Default is sample ID pulled from bam/cram files., type: 'string[]?' }
   ram_germline: {  doc: Provide ram (in GB) based on the size of vcf,type: 'int?', default: 8} 
   ram_tumor: {  doc: Provide ram (in GB) size and number of cram/bam inputs, type: 'int?', default: 16} 
+  minCore: { type: 'int?', default: 16, doc: "Minimum number of cores for tumor tool" }
 outputs:
-  output_file: { type: File, doc: output file from LOH app, outputSource: run_readcount_parser/loh_output_file_tool }
+  output_file: { type: File, doc: output file from LOH app, outputSource: run_tumor_tool/loh_output_file_tool }
 
 steps:
-  run_gene_extract_list_prepare:
+  run_germline_tool:
     run: ../tools/run_gene_extract_list_prepare.cwl
     in:
       bs_id: BS_ID
@@ -34,17 +35,18 @@ steps:
       ram: ram_germline
     out:
       [ output_file_1_tool,output_file_2_tool,log_output]
-  run_readcount_parser:
+  run_tumor_tool:
     run: ../tools/run_readcount_parser.cwl
     in:
       participant_id: participant_id
-      germline_file: run_gene_extract_list_prepare/output_file_1_tool
-      list_dir: run_gene_extract_list_prepare/output_file_2_tool
+      germline_file: run_germline_tool/output_file_1_tool
+      list_dir: run_germline_tool/output_file_2_tool
       minDepth: minDepth
       reference: reference
       patientbamcrams : bamscrams
       peddy: peddy_file
       bamcramsampleID: bamcramsampleIDs
       ram: ram_tumor
+      minCore: minCore
     out:
       [ loh_output_file_tool,log_output ]

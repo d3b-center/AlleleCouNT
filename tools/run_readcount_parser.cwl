@@ -10,7 +10,7 @@ requirements:
   dockerPull: pgc-images.sbgenomics.com/d3b-bixu/loh:1.0.1
 - class: InlineJavascriptRequirement  
 - class: ResourceRequirement
-  coresMin: 16
+  coresMin: ${ return inputs.minCore }
   ramMin: ${ return inputs.ram * 1000 } 
 - class: InitialWorkDirRequirement
   listing:
@@ -20,9 +20,9 @@ requirements:
    - entryname: tmp_list
      entry: $(inputs.list_dir)
      writable: true
-   - entryname: format_parser.py
+   - entryname: loh_functions.py
      entry:
-      $include: ../scripts/format_parser.py 
+      $include: ../scripts/loh_functions.py
       
 baseCommand: [ python3 ]
 arguments:
@@ -40,7 +40,8 @@ inputs:
   patientbamcrams: { doc: provide one or more patient bam/cram files, type: 'File[]', secondaryFiles: [ { pattern: ".crai", required: false } ,{ pattern: ".bai",required: false } ], inputBinding: { prefix: --patientbamcrams, position: 2} } 
   peddy:  { doc: provide patient peddy file, type: 'File?', inputBinding: { prefix: --peddy, position: 2} } 
   bamcramsampleID:  { doc: provide unique identifers (in the same order) for cram/bam files provided under patientbamcrams tag. Default is sample ID from bam/cram files, type: 'string[]?', inputBinding: { prefix: --bamcramsampleID, position: 2} } 
-  ram: { doc: Provide ram based on the vcf and crams inputs, type: 'int?',default: 16} 
+  ram: { doc: Provide ram based on the vcf and crams inputs, type: 'int?', default: 14} 
+  minCore: {type: 'int?', default: 14, doc: "No of cores"}
 outputs:
    loh_output_file_tool:
     type: File

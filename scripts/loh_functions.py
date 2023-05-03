@@ -24,31 +24,19 @@ class CustomThread(Thread):
         return self._return
 
 
-def func_parse_bamread_data(bam_readcount_output_file, parse_data, minDepth):
-    # taken from https://github.com/genome/bam-readcount/tree/master/tutorial
+def func_parse_bamread_data(bam_readcount_output_file, minDepth):
+    # Initially taken from https://github.com/genome/bam-readcount/tree/master/tutorial
+    # adapted to get more specific data
     # Per-base/indel data fields
     # IMPORTANT: this relies on Python 3.6+ to maintain insertion order
     # Each field is a key with value a function to convert to the
     # appropriate data type
-    base_fields = {
-        "base": str,
-        "count": int,
-        "avg_mapping_quality": float,
-        "avg_basequality": float,
-        "avg_se_mapping_quality": float,
-        "num_plus_strand": int,
-        "num_minus_strand": int,
-        "avg_pos_as_fraction": float,
-        "avg_num_mismatches_as_fraction": float,
-        "avg_sum_mismatch_qualities": float,
-        "num_q2_containing_reads": int,
-        "avg_distance_to_q2_start_in_q2_reads": float,
-        "avg_clipped_length": float,
-        "avg_distance_to_effective_3p_end": float,
-    }
+    parse_data = []
+    base_fields = {"base": str, "count": int}
 
     # Open the bam-readcount output file and read it line by line
     # Note that the output has no header, so we consume every line
+    prevLine = []
     with open(bam_readcount_output_file) as in_fh:
         for line in in_fh:
             # Strip newline from end of line
@@ -62,6 +50,7 @@ def func_parse_bamread_data(bam_readcount_output_file, parse_data, minDepth):
             depth = int(fields[3])  # Depth of coverage
             # The remaining fields are data for each base or indel
             # Iterate over each base/indel
+            ref_count = 0
             for base_data_string in fields[4:]:
                 # We will store per-base/indel data in a dict
                 base_data = {}
@@ -75,24 +64,39 @@ def func_parse_bamread_data(bam_readcount_output_file, parse_data, minDepth):
                 # Skip zero-depth bases
                 if depth == 0:
                     continue
-                if base_data["base"] == "=":
+                # bases with no counts
+                if base_data["base"] == "=" or base_data["count"] == 0:
                     continue
-                # Skip reference bases and bases with no counts
-                if base_data["base"] == reference_base:  # or base_data['count'] == 0:
+                # Skip reference bases
+                if base_data["base"] == reference_base:
+                    ref_count = base_data["count"]
                     continue
                 # Calculate an allele frequency (VAF) from the base counts
                 vaf = base_data["count"] / depth
                 # Filter on minimum depth and VAF
+
                 if depth >= int(minDepth):  # minDepth
                     if (
                         base_data["base"][0] == "-" and len(base_data["base"]) > 1
-                    ):  # convert bam-readcount deletion type to maf file format
-                        reference_base_tmp = reference_base
-                        reference_base = base_data["base"][1:]
-                        base_data["base"] = reference_base_tmp
+                    ):  # convert bam-readcount deletion calls type to maf file format
+                        if len(prevLine) > 3:
+                            ref_base = prevLine[2] + base_data["base"][1:]
+                            alt_base = prevLine[2]
+                            row = [
+                                prevLine[0],
+                                prevLine[1],
+                                ref_base,
+                                alt_base,
+                                "%0.2f" % (vaf),
+                                depth,
+                                base_data["count"],
+                                ref_count,
+                            ]
+                            parse_data.append(row)
+                            continue
                     if (
                         base_data["base"][0] == "+" and len(base_data["base"]) > 1
-                    ):  # convert bam-readcount insertion type to maf file format
+                    ):  # convert bam-readcount insertion calls type to maf file format
                         base_data["base"] = reference_base + base_data["base"][1:]
 
                     row = [
@@ -103,9 +107,10 @@ def func_parse_bamread_data(bam_readcount_output_file, parse_data, minDepth):
                         "%0.2f" % (vaf),
                         depth,
                         base_data["count"],
+                        ref_count,
                     ]
-
                     parse_data.append(row)
+            prevLine = fields  # save previous line fields
     return parse_data
 
 

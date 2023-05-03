@@ -11,16 +11,16 @@ requirements:
   dockerPull: pgc-images.sbgenomics.com/d3b-bixu/loh:1.0.1
 - class: InlineJavascriptRequirement  
 - class: ResourceRequirement
-  coresMin: 8
+  coresMin: 4
   ramMin: ${ return inputs.ram * 1000 } 
 - class: InitialWorkDirRequirement
   listing:
   - entryname: run_gene_extract_list_prepare.py
     entry:
       $include: ../scripts/run_gene_extract_list_prepare.py
-  - entryname: format_parser.py
+  - entryname: loh_functions.py
     entry:
-      $include: ../scripts/format_parser.py
+      $include: ../scripts/loh_functions.py
 baseCommand: [ python3 ]
 arguments:
 - position: 1
@@ -33,7 +33,7 @@ inputs:
   sample_vcf_file_tool: { doc: provide vcf file for germline, type: File, inputBinding: { prefix: --input, position: 2 }  }
   frequency_tool: { doc: provide popmax cutoff for rare disease, type: float, inputBinding: { prefix: --frequency, position: 2 }  }
   peddy_file_tool: { doc: provide ped file for the trios, type: 'File?', inputBinding: { prefix: --peddy, position: 2 } }
-  ram: { doc: provide ram (in GB) based on number of crams files, type: 'int?', default: 16 } 
+  ram: { doc: provide ram (in GB) based on number of crams files, type: 'int?', default: 7 } 
 
 outputs:
    output_file_1_tool:

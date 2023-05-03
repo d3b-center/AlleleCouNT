@@ -5,9 +5,9 @@ import pandas as pd
 import subprocess
 import re
 import os
-from format_parser import extract_BS_id_peddy_file
-from format_parser import CustomThread
-from format_parser import func_parse_bamread_data
+from loh_functions import extract_BS_id_peddy_file
+from loh_functions import CustomThread
+from loh_functions import func_parse_bamread_data
 from datetime import datetime
 import logging
 
@@ -61,21 +61,13 @@ def worker(region_list, bamcram, read_file_name, ID, headers):
     )
     subprocess.run(cmd_bamreadcount, shell=True)
 
-    parse_data = []
     list_data = func_parse_bamread_data(
-        read_file_name, parse_data, args.minDepth
+        read_file_name, args.minDepth
     )  # tumor data as a list
     df_readcount_thread = pd.DataFrame(
         list_data, columns=headers
     )  # convert to pandas with headers
 
-    first_header = "proband_" + ID + "_tumor_depth"
-    target_header = "proband_" + ID + "_tumor_ref_depth"
-    second_header = "proband_" + ID + "_tumor_alt_depth"
-
-    df_readcount_thread[target_header] = df_readcount_thread[first_header].astype(
-        int
-    ) - df_readcount_thread[second_header].astype(int)
     os.remove(read_file_name)
 
     return df_readcount_thread
@@ -93,6 +85,7 @@ def parse_bam_readcout_data(bamcram, ID, path_lists):
         "tumor_vaf",
         "tumor_depth",
         "tumor_alt_depth",
+        "tumor_ref_depth",
     ]  # tumor headers
 
     headers = [
@@ -134,10 +127,19 @@ def parse_bam_readcout_data(bamcram, ID, path_lists):
 
     # joining results from threads together
     df_readcount = pd.concat(patient_thread_frame)
-    df_readcount.sort_values(by="start", ascending=False)
+    df_readcount = df_readcount.astype(
+        {
+            "start": "uint32",  # position
+            str(headers[4]): "float32",  # vaf
+            str(headers[5]): "uint16",  # total_depth
+            str(headers[6]): "uint16",  # alt_depth
+            str(headers[7]): "uint16",  # ref_depth
+        }
+    )
+    df_readcount.sort_values(["start", "chr"], ascending=[True, True])
 
     logger.info("Sample: %s return the pandas dataframe " % ID)
-    return df_readcount
+    return df_readcount.convert_dtypes()
 
 
 def main():
@@ -156,7 +158,7 @@ def main():
 
     # read tsv file from bcftools
     logger.info("Reading germline input")
-    bcftool_tsv = pd.read_csv(args.tsv, sep="\t")  # germline
+    bcftool_tsv = pd.read_csv(args.tsv, sep="\t", low_memory=False)  # germline
     sample_array = []
 
     cram_files = args.patientbamcrams
@@ -205,24 +207,31 @@ def main():
         fire_thread.start()
         fired_threads.append(fire_thread)
 
-    merge_dataframe = bcftool_tsv
+    merge_dataframe = bcftool_tsv.convert_dtypes()  # convert to appropriate datatype
 
+    logger.info("Joining sample based threads")
     for thread_running in fired_threads:
         patient_tumor_df = thread_running.join()
         merge_dataframe = pd.merge(
             merge_dataframe,
             patient_tumor_df,
-            how="inner",
+            how="left",
             on=["chr", "start", "ref", "alt"],
+            indicator=False,
         )
-    logger.info("Joined all cram file based threads and merged data")
 
+    logger.info("Joined all cram file based threads and merged data")
     # output_file in tsv format
-    loh_output_file_name = args.participant_id + ".germline.tumor.loh.out.tsv"
+    loh_output_file_name = args.participant_id + ".germline.tumor.version2.loh.out.tsv"
+
+    logger.info("Dropping merge duplicates")
+    merge_dataframe.drop_duplicates(inplace=True)
+
     logger.info("Writing loh app output file")
     merge_dataframe.to_csv(loh_output_file_name, sep="\t", index=False)
 
     logger.info("Tumor tool run sucessfully")
+
 
 if __name__ == "__main__":
     main()

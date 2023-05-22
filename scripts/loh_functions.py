@@ -89,8 +89,7 @@ def func_parse_bamread_data(bam_readcount_output_file, minDepth):
                                 alt_base,
                                 "%0.2f" % (vaf),
                                 depth,
-                                base_data["count"],
-                                ref_count,
+                                base_data["count"]
                             ]
                             parse_data.append(row)
                             continue
@@ -106,10 +105,11 @@ def func_parse_bamread_data(bam_readcount_output_file, minDepth):
                         base_data["base"],
                         "%0.2f" % (vaf),
                         depth,
-                        base_data["count"],
-                        ref_count,
+                        base_data["count"]
                     ]
-                    parse_data.append(row)
+            if row[-2] >= int(minDepth):  # minDepth        
+                row.append(ref_count) # add reference count
+                parse_data.append(row) # calls
             prevLine = fields  # save previous line fields
     return parse_data
 

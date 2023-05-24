@@ -62,15 +62,11 @@ def worker(region_list, bamcram, read_file_name, ID, headers):
     subprocess.run(cmd_bamreadcount, shell=True)
 
     df_readcount_thread = func_parse_bamread_data(
-        read_file_name, args.minDepth,headers
-    )  # tumor data as a list
-    #df_readcount_thread = pd.DataFrame(
-    #    list_readcount_thread, columns=headers
-    #)  # convert to pandas with headers
+        read_file_name, args.minDepth, headers
+    )  # tumor data as a pandas dataframe
 
     os.remove(read_file_name)
-    #print(df_readcount_thread)
-    #print(df_readcount_thread.dtypes)
+
     return df_readcount_thread
 
 

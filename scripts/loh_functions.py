@@ -6,6 +6,7 @@ import logging
 from threading import Thread
 import pandas as pd
 
+
 class CustomThread(Thread):
     # overriding join function in standard threads
     # With this in place join function will return data structure from the function
@@ -24,7 +25,7 @@ class CustomThread(Thread):
         return self._return
 
 
-def func_parse_bamread_data(bam_readcount_output_file, minDepth,headers):
+def func_parse_bamread_data(bam_readcount_output_file, minDepth, headers):
     # Initially taken from https://github.com/genome/bam-readcount/tree/master/tutorial
     # adapted to get more specific data
     # Per-base/indel data fields
@@ -62,7 +63,7 @@ def func_parse_bamread_data(bam_readcount_output_file, minDepth,headers):
                     # Store each field of data, converting to the appropriate
                     # data type
                     base_data[base_field] = base_fields[base_field](base_values[i])
-              
+
                 # Skip reference bases and store ref count in ref_list
                 if base_data["base"] == reference_base:
                     ref_count = base_data["count"]
@@ -98,8 +99,8 @@ def func_parse_bamread_data(bam_readcount_output_file, minDepth,headers):
                             ]
                             parse_data.append(row)
                             ref_list.append(
-                            [prevLine[0], prevLine[1], ref_base, ref_count]
-                            ) 
+                                [prevLine[0], prevLine[1], ref_base, ref_count]
+                            )
                             continue
                     if (
                         base_data["base"][0] == "+" and len(base_data["base"]) > 1
@@ -117,13 +118,13 @@ def func_parse_bamread_data(bam_readcount_output_file, minDepth,headers):
                         ref_count,
                     ]
                     parse_data.append(row)  # calls
-                prevLine = fields  # save previous line fields    
-    #add ref count to parse data   
-    parse_df=pd.DataFrame(parse_data,columns=headers)
-    ref_df=pd.DataFrame(ref_list,columns=['chr','start','ref','ref_count'])
-    merge_df=pd.merge(parse_df,ref_df,how='left',on=['chr','start','ref'])
-    merge_df=merge_df.drop(columns=[headers[-1]])
-    merge_df=merge_df.rename(columns={'ref_count': headers[-1]})
+                prevLine = fields  # save previous line fields
+    # add ref count to parse data
+    parse_df = pd.DataFrame(parse_data, columns=headers)
+    ref_df = pd.DataFrame(ref_list, columns=["chr", "start", "ref", "ref_count"])
+    merge_df = pd.merge(parse_df, ref_df, how="left", on=["chr", "start", "ref"])
+    merge_df = merge_df.drop(columns=[headers[-1]])
+    merge_df = merge_df.rename(columns={"ref_count": headers[-1]})
     return merge_df
 
 

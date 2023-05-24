@@ -4,6 +4,7 @@ import re
 import gzip
 import logging
 from threading import Thread
+import pandas as pd
 
 
 class CustomThread(Thread):
@@ -24,7 +25,7 @@ class CustomThread(Thread):
         return self._return
 
 
-def func_parse_bamread_data(bam_readcount_output_file, minDepth):
+def func_parse_bamread_data(bam_readcount_output_file, minDepth, headers):
     # Initially taken from https://github.com/genome/bam-readcount/tree/master/tutorial
     # adapted to get more specific data
     # Per-base/indel data fields
@@ -32,8 +33,9 @@ def func_parse_bamread_data(bam_readcount_output_file, minDepth):
     # Each field is a key with value a function to convert to the
     # appropriate data type
     parse_data = []
-    base_fields = {"base": str, "count": int}
 
+    base_fields = {"base": str, "count": int}
+    ref_list = []
     # Open the bam-readcount output file and read it line by line
     # Note that the output has no header, so we consume every line
     prevLine = []
@@ -61,20 +63,23 @@ def func_parse_bamread_data(bam_readcount_output_file, minDepth):
                     # Store each field of data, converting to the appropriate
                     # data type
                     base_data[base_field] = base_fields[base_field](base_values[i])
+
+                # Skip reference bases and store ref count in ref_list
+                if base_data["base"] == reference_base:
+                    ref_count = base_data["count"]
+                    ref_list.append(
+                        [chrom, position, base_data["base"], ref_count]
+                    )  # store ref count data
+                    continue
                 # Skip zero-depth bases
                 if depth == 0:
                     continue
                 # bases with no counts
                 if base_data["base"] == "=" or base_data["count"] == 0:
                     continue
-                # Skip reference bases
-                if base_data["base"] == reference_base:
-                    ref_count = base_data["count"]
-                    continue
                 # Calculate an allele frequency (VAF) from the base counts
                 vaf = base_data["count"] / depth
                 # Filter on minimum depth and VAF
-
                 if depth >= int(minDepth):  # minDepth
                     if (
                         base_data["base"][0] == "-" and len(base_data["base"]) > 1
@@ -93,6 +98,9 @@ def func_parse_bamread_data(bam_readcount_output_file, minDepth):
                                 ref_count,
                             ]
                             parse_data.append(row)
+                            ref_list.append(
+                                [prevLine[0], prevLine[1], ref_base, ref_count]
+                            )
                             continue
                     if (
                         base_data["base"][0] == "+" and len(base_data["base"]) > 1
@@ -109,9 +117,15 @@ def func_parse_bamread_data(bam_readcount_output_file, minDepth):
                         base_data["count"],
                         ref_count,
                     ]
-                    parse_data.append(row)
-            prevLine = fields  # save previous line fields
-    return parse_data
+                    parse_data.append(row)  # calls
+                prevLine = fields  # save previous line fields
+    # add ref count to parse data
+    parse_df = pd.DataFrame(parse_data, columns=headers)
+    ref_df = pd.DataFrame(ref_list, columns=["chr", "start", "ref", "ref_count"])
+    merge_df = pd.merge(parse_df, ref_df, how="left", on=["chr", "start", "ref"])
+    merge_df = merge_df.drop(columns=[headers[-1]])
+    merge_df = merge_df.rename(columns={"ref_count": headers[-1]})
+    return merge_df
 
 
 def extract_format_fields_vcf(lines, header):

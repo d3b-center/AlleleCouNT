@@ -1,0 +1,605 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="cwl-workflow yKwnQx __plugin-port-drag __plugin-validate __plugin-selection __plugin-update" ct-click="" tabindex="-1" ct-drop-enabled="" ct-drop-zones="graph-editor">
+            <rect x="0" y="0" width="100%" height="100%" class="pan-handle" transform="matrix(1,0,0,1,0,0)" style="fill:rgba(0, 0, 0, 0); stroke:none; stroke-width:1px; "/>
+            <g class="workflow" transform="matrix(0.733553 0 0 0.733553 420.063 97.2813)">
+            <g tabindex="-1" class="edge" data-source-port="BS_ID" data-destination-port="bs_id" data-source-node="BS_ID" data-source-connection="out/BS_ID/BS_ID" data-destination-connection="in/run_germline_tool/bs_id" data-destination-node="run_germline_tool">
+                <path class="sub-edge outer" d="M 37 616.5 C 82.4198055267334 616.5 82.4198055267334 47.27928924560547 127.8396110534668 47.27928924560547" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 37 616.5 C 82.4198055267334 616.5 82.4198055267334 47.27928924560547 127.8396110534668 47.27928924560547" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="sample_vcf_file" data-destination-port="sample_vcf_file_tool" data-source-node="sample_vcf_file" data-source-connection="out/sample_vcf_file/sample_vcf_file" data-destination-connection="in/run_germline_tool/sample_vcf_file_tool" data-destination-node="run_germline_tool">
+                <path class="sub-edge outer" d="M 37 188.5 C 82.4198055267334 188.5 82.4198055267334 -47.27928924560547 127.8396110534668 -47.27928924560547" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 37 188.5 C 82.4198055267334 188.5 82.4198055267334 -47.27928924560547 127.8396110534668 -47.27928924560547" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="frequency" data-destination-port="frequency_tool" data-source-node="frequency" data-source-connection="out/frequency/frequency" data-destination-connection="in/run_germline_tool/frequency_tool" data-destination-node="run_germline_tool">
+                <path class="sub-edge outer" d="M 37 509.5 C 74.8806324005127 509.5 74.8806324005127 25.745180130004883 112.76126480102539 25.745180130004883" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 37 509.5 C 74.8806324005127 509.5 74.8806324005127 25.745180130004883 112.76126480102539 25.745180130004883" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="peddy_file" data-destination-port="peddy_file_tool" data-source-node="peddy_file" data-source-connection="out/peddy_file/peddy_file" data-destination-connection="in/run_germline_tool/peddy_file_tool" data-destination-node="run_germline_tool">
+                <path class="sub-edge outer" d="M 37 402.5 C 72.22265625 402.5 72.22265625 7.960203880059101e-15 107.4453125 7.960203880059101e-15" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 37 402.5 C 72.22265625 402.5 72.22265625 7.960203880059101e-15 107.4453125 7.960203880059101e-15" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="ram_germline" data-destination-port="ram" data-source-node="ram_germline" data-source-connection="out/ram_germline/ram_germline" data-destination-connection="in/run_germline_tool/ram" data-destination-node="run_germline_tool">
+                <path class="sub-edge outer" d="M 37 295.5 C 74.8806324005127 295.5 74.8806324005127 -25.745180130004883 112.76126480102539 -25.745180130004883" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 37 295.5 C 74.8806324005127 295.5 74.8806324005127 -25.745180130004883 112.76126480102539 -25.745180130004883" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="participant_id" data-destination-port="participant_id" data-source-node="participant_id" data-source-connection="out/participant_id/participant_id" data-destination-connection="in/run_tumor_tool/participant_id" data-destination-node="run_tumor_tool">
+                <path class="sub-edge outer" d="M 209.4453125 349 C 305.2593688964844 349 305.2593688964844 328.41618728637695 401.07342529296875 328.41618728637695" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 209.4453125 349 C 305.2593688964844 349 305.2593688964844 328.41618728637695 401.07342529296875 328.41618728637695" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="output_file_1_tool" data-destination-port="germline_file" data-source-node="run_germline_tool" data-source-connection="out/run_germline_tool/output_file_1_tool" data-destination-connection="in/run_tumor_tool/germline_file" data-destination-node="run_tumor_tool">
+                <path class="sub-edge outer" d="M 237.4453125 0 C 333.3165855407715 0 333.3165855407715 409.6474914550781 429.18785858154297 409.6474914550781" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 237.4453125 0 C 333.3165855407715 0 333.3165855407715 409.6474914550781 429.18785858154297 409.6474914550781" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="output_file_2_tool" data-destination-port="list_dir" data-source-node="run_germline_tool" data-source-connection="out/run_germline_tool/output_file_2_tool" data-destination-connection="in/run_tumor_tool/list_dir" data-destination-node="run_tumor_tool">
+                <path class="sub-edge outer" d="M 225.6901969909668 -37.282466888427734 C 320.5874614715576 -37.282466888427734 320.5874614715576 392.22253799438477 415.48472595214844 392.22253799438477" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 225.6901969909668 -37.282466888427734 C 320.5874614715576 -37.282466888427734 320.5874614715576 392.22253799438477 415.48472595214844 392.22253799438477" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="minDepth" data-destination-port="minDepth" data-source-node="minDepth" data-source-connection="out/minDepth/minDepth" data-destination-connection="in/run_tumor_tool/minDepth" data-destination-node="run_tumor_tool">
+                <path class="sub-edge outer" d="M 209.4453125 456 C 305.2593688964844 456 305.2593688964844 350.58381271362305 401.07342529296875 350.58381271362305" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 209.4453125 456 C 305.2593688964844 456 305.2593688964844 350.58381271362305 401.07342529296875 350.58381271362305" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="reference" data-destination-port="reference" data-source-node="reference" data-source-connection="out/reference/reference" data-destination-connection="in/run_tumor_tool/reference" data-destination-node="run_tumor_tool">
+                <path class="sub-edge outer" d="M 209.4453125 135 C 327.9192485809326 135 327.9192485809326 255.3746566772461 446.39318466186523 255.3746566772461" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 209.4453125 135 C 327.9192485809326 135 327.9192485809326 255.3746566772461 446.39318466186523 255.3746566772461" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="bamscrams" data-destination-port="patientbamcrams" data-source-node="bamscrams" data-source-connection="out/bamscrams/bamscrams" data-destination-connection="in/run_tumor_tool/patientbamcrams" data-destination-node="run_tumor_tool">
+                <path class="sub-edge outer" d="M 209.4453125 670 C 307.7012519836426 670 307.7012519836426 306.79319763183594 405.95719146728516 306.79319763183594" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 209.4453125 670 C 307.7012519836426 670 307.7012519836426 306.79319763183594 405.95719146728516 306.79319763183594" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="peddy_file" data-destination-port="peddy" data-source-node="peddy_file" data-source-connection="out/peddy_file/peddy_file" data-destination-connection="in/run_tumor_tool/peddy" data-destination-node="run_tumor_tool">
+                <path class="sub-edge outer" d="M 37 402.5 C 226.24236297607422 402.5 226.24236297607422 286.77746200561523 415.48472595214844 286.77746200561523" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 37 402.5 C 226.24236297607422 402.5 226.24236297607422 286.77746200561523 415.48472595214844 286.77746200561523" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="bamcramsampleIDs" data-destination-port="bamcramsampleID" data-source-node="bamcramsampleIDs" data-source-connection="out/bamcramsampleIDs/bamcramsampleIDs" data-destination-connection="in/run_tumor_tool/bamcramsampleID" data-destination-node="run_tumor_tool">
+                <path class="sub-edge outer" d="M 209.4453125 777 C 327.9192543029785 777 327.9192543029785 423.62535095214844 446.39319610595703 423.62535095214844" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 209.4453125 777 C 327.9192543029785 777 327.9192543029785 423.62535095214844 446.39319610595703 423.62535095214844" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="ram_tumor" data-destination-port="ram" data-source-node="ram_tumor" data-source-connection="out/ram_tumor/ram_tumor" data-destination-connection="in/run_tumor_tool/ram" data-destination-node="run_tumor_tool">
+                <path class="sub-edge outer" d="M 209.4453125 242 C 319.3165855407715 242 319.3165855407715 269.3525085449219 429.18785858154297 269.3525085449219" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 209.4453125 242 C 319.3165855407715 242 319.3165855407715 269.3525085449219 429.18785858154297 269.3525085449219" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="minCore" data-destination-port="minCore" data-source-node="minCore" data-source-connection="out/minCore/minCore" data-destination-connection="in/run_tumor_tool/minCore" data-destination-node="run_tumor_tool">
+                <path class="sub-edge outer" d="M 209.4453125 563 C 307.7012519836426 563 307.7012519836426 372.20680236816406 405.95719146728516 372.20680236816406" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 209.4453125 563 C 307.7012519836426 563 307.7012519836426 372.20680236816406 405.95719146728516 372.20680236816406" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            <g tabindex="-1" class="edge" data-source-port="loh_output_file_tool" data-destination-port="output_file" data-source-node="run_tumor_tool" data-source-connection="out/run_tumor_tool/loh_output_file_tool" data-destination-connection="in/output_file/output_file" data-destination-node="output_file">
+                <path class="sub-edge outer" d="M 592.2788848876953 299.8920211791992 C 726.6461563110352 299.8920211791992 726.6461563110352 402.5 861.013427734375 402.5" style="fill:none; stroke:rgb(255, 255, 255); stroke-width:5px; "/>
+                <path class="sub-edge inner" d="M 592.2788848876953 299.8920211791992 C 726.6461563110352 299.8920211791992 726.6461563110352 402.5 861.013427734375 402.5" style="fill:none; stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+            </g>
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        <g tabindex="-1" class="node step  " data-connection-id="run_germline_tool" transform="matrix(1, 0, 0, 1, 172.4453125, 0)" data-id="run_germline_tool">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="65" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="48.75" class="inner" style="fill:rgb(17, 167, 167); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 398.39 397.78" x="-10" y="-8" width="20" height="15"><title>tool2</title><polygon points="38.77 397.57 0 366 136.15 198.78 0 31.57 38.77 0 200.63 198.78 38.77 397.57" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/><rect x="198.39" y="347.78" width="200" height="50" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 95)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">run_germline</text>
+                
+                
+            <g class="port input-port" transform="matrix(0.9999999999999999, 0, 0, 0.9999999999999999, -44.605702264388945, -47.279290661987375)" data-connection-id="in/run_germline_tool/sample_vcf_file_tool" data-port-id="sample_vcf_file_tool">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port input-port" transform="matrix(1, 0, 0, 1, -59.68404923267005, -25.74517949427071)" data-connection-id="in/run_germline_tool/ram" data-port-id="ram">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port input-port" transform="matrix(1, 0, 0, 1, -65, 7.960204194457796e-15)" data-connection-id="in/run_germline_tool/peddy_file_tool" data-port-id="peddy_file_tool">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port input-port" transform="matrix(1, 0, 0, 1, -59.684049232670056, 25.7451794942707)" data-connection-id="in/run_germline_tool/frequency_tool" data-port-id="frequency_tool">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port input-port" transform="matrix(1, 0, 0, 1, -44.60570226438894, 47.27929066198739)" data-connection-id="in/run_germline_tool/bs_id" data-port-id="bs_id">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+                
+            <g class="port output-port" transform="matrix(0.9999999999999999, 0, 0, 0.9999999999999999, 53.244882878784466, -37.282468362817994)" data-connection-id="out/run_germline_tool/output_file_2_tool" data-port-id="output_file_2_tool">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 65, 0)" data-connection-id="out/run_germline_tool/output_file_1_tool" data-port-id="output_file_1_tool">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port output-port" transform="matrix(0.9999999999999999, 0, 0, 0.9999999999999999, 53.244882878784466, 37.282468362817994)" data-connection-id="out/run_germline_tool/log_output" data-port-id="log_output">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            </g><g tabindex="-1" class="node step  " data-connection-id="run_tumor_tool" transform="matrix(1, 0, 0, 1, 500.457275390625, 339.5)" data-id="run_tumor_tool">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="100" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="75" class="inner" style="fill:rgb(17, 167, 167); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 398.39 397.78" x="-10" y="-8" width="20" height="15"><title>tool2</title><polygon points="38.77 397.57 0 366 136.15 198.78 0 31.57 38.77 0 200.63 198.78 38.77 397.57" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/><rect x="198.39" y="347.78" width="200" height="50" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 130)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">run_tumor_tool</text>
+                
+                
+            <g class="port input-port" transform="matrix(1, 0, 0, 1, -54.064091929166956, -84.1253467385103)" data-connection-id="in/run_tumor_tool/reference" data-port-id="reference">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port input-port" transform="matrix(1, 0, 0, 1, -71.2694154395766, -70.14749049610428)" data-connection-id="in/run_tumor_tool/ram" data-port-id="ram">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port input-port" transform="matrix(1, 0, 0, 1, -84.97254810071958, -52.722538532120176)" data-connection-id="in/run_tumor_tool/peddy" data-port-id="peddy">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port input-port" transform="matrix(0.9999999999999999, 0, 0, 0.9999999999999999, -94.50008028776733, -32.706800907541044)" data-connection-id="in/run_tumor_tool/patientbamcrams" data-port-id="patientbamcrams">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port input-port" transform="matrix(0.9999999999999999, 0, 0, 0.9999999999999999, -99.38384725116146, -11.08381277168672)" data-connection-id="in/run_tumor_tool/participant_id" data-port-id="participant_id">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port input-port" transform="matrix(1, 0, 0, 1, -99.38384725116146, 11.083812771686745)" data-connection-id="in/run_tumor_tool/minDepth" data-port-id="minDepth">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port input-port" transform="matrix(1, 0, 0, 1, -94.50008028776733, 32.706800907541066)" data-connection-id="in/run_tumor_tool/minCore" data-port-id="minCore">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port input-port" transform="matrix(1, 0, 0, 1, -84.97254810071959, 52.72253853212017)" data-connection-id="in/run_tumor_tool/list_dir" data-port-id="list_dir">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port input-port" transform="matrix(1, 0, 0, 1, -71.2694154395766, 70.14749049610427)" data-connection-id="in/run_tumor_tool/germline_file" data-port-id="germline_file">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port input-port" transform="matrix(1, 0, 0, 1, -54.06408072719899, 84.12535393757882)" data-connection-id="in/run_tumor_tool/bamcramsampleID" data-port-id="bamcramsampleID">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+                
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 91.8216102485173, -39.6079776228146)" data-connection-id="out/run_tumor_tool/loh_output_file_tool" data-port-id="loh_output_file_tool">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 91.8216102485173, 39.6079776228146)" data-connection-id="out/run_tumor_tool/log_output" data-port-id="log_output">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            </g><g tabindex="-1" class="node input type-string " data-connection-id="out/BS_ID/BS_ID" transform="matrix(1, 0, 0, 1, 0, 616.5)" data-id="BS_ID">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="37" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="27.75" class="inner" style="fill:rgb(195, 195, 195); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 499 365" x="-11" y="-10" width="20" height="20"><title>type_input</title><g id="input"><path d="M316.5,68a181.72,181.72,0,0,0-114.12,40.09L238,143.72a132.5,132.5,0,1,1,1.16,214.39L203.48,393.8A182.5,182.5,0,1,0,316.5,68Z" transform="translate(0 -68)" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/><g id="Layer_22" data-name="Layer 22"><g id="Layer_9_copy_4" data-name="Layer 9 copy 4"><polygon points="290.36 182 176.68 295.68 141.32 260.32 194.64 207 0 207 0 157 194.64 157 142.32 104.68 177.68 69.32 290.36 182" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/></g></g></g></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 67)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">BS_ID</text>
+                
+                
+                
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 37, 0)" data-connection-id="out/BS_ID/BS_ID" data-port-id="BS_ID">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            </g><g tabindex="-1" class="node input type-string " data-connection-id="out/participant_id/participant_id" transform="matrix(1, 0, 0, 1, 172.4453125, 349)" data-id="participant_id">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="37" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="27.75" class="inner" style="fill:rgb(195, 195, 195); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 499 365" x="-11" y="-10" width="20" height="20"><title>type_input</title><g id="input"><path d="M316.5,68a181.72,181.72,0,0,0-114.12,40.09L238,143.72a132.5,132.5,0,1,1,1.16,214.39L203.48,393.8A182.5,182.5,0,1,0,316.5,68Z" transform="translate(0 -68)" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/><g id="Layer_22" data-name="Layer 22"><g id="Layer_9_copy_4" data-name="Layer 9 copy 4"><polygon points="290.36 182 176.68 295.68 141.32 260.32 194.64 207 0 207 0 157 194.64 157 142.32 104.68 177.68 69.32 290.36 182" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/></g></g></g></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 67)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">participant_id</text>
+                
+                
+                
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 37, 0)" data-connection-id="out/participant_id/participant_id" data-port-id="participant_id">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            </g><g tabindex="-1" class="node input type-float " data-connection-id="out/frequency/frequency" transform="matrix(1, 0, 0, 1, 0, 509.5)" data-id="frequency">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="37" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="27.75" class="inner" style="fill:rgb(195, 195, 195); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 499 365" x="-11" y="-10" width="20" height="20"><title>type_input</title><g id="input"><path d="M316.5,68a181.72,181.72,0,0,0-114.12,40.09L238,143.72a132.5,132.5,0,1,1,1.16,214.39L203.48,393.8A182.5,182.5,0,1,0,316.5,68Z" transform="translate(0 -68)" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/><g id="Layer_22" data-name="Layer 22"><g id="Layer_9_copy_4" data-name="Layer 9 copy 4"><polygon points="290.36 182 176.68 295.68 141.32 260.32 194.64 207 0 207 0 157 194.64 157 142.32 104.68 177.68 69.32 290.36 182" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/></g></g></g></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 67)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">frequency</text>
+                
+                
+                
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 37, 0)" data-connection-id="out/frequency/frequency" data-port-id="frequency">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            </g><g tabindex="-1" class="node input type-File " data-connection-id="out/peddy_file/peddy_file" transform="matrix(1, 0, 0, 1, 0, 402.5)" data-id="peddy_file">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="37" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="27.75" class="inner" style="fill:rgb(195, 195, 195); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 499 462.86" y="-10" x="-11" width="20" height="20"><title>file_input</title><path d="M386.06,0H175V58.29l50,50V50H337.81V163.38h25l86.19.24V412.86H225V353.71l-50,50v59.15H499V112.94Zm1.75,113.45v-41l41.1,41.1Z" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/><polygon points="387.81 1.06 387.81 1.75 387.12 1.06 387.81 1.06" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/><polygon points="290.36 231 176.68 344.68 141.32 309.32 194.64 256 0 256 0 206 194.64 206 142.32 153.68 177.68 118.32 290.36 231" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 67)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">peddy_file</text>
+                
+                
+                
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 37, 0)" data-connection-id="out/peddy_file/peddy_file" data-port-id="peddy_file">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            </g><g tabindex="-1" class="node input type-array items-File" data-connection-id="out/bamscrams/bamscrams" transform="matrix(1, 0, 0, 1, 172.4453125, 670)" data-id="bamscrams">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="37" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="27.75" class="inner" style="fill:rgb(195, 195, 195); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 499 462.86" y="-10" x="-11" width="20" height="20"><title>file_input</title><path d="M386.06,0H175V58.29l50,50V50H337.81V163.38h25l86.19.24V412.86H225V353.71l-50,50v59.15H499V112.94Zm1.75,113.45v-41l41.1,41.1Z" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/><polygon points="387.81 1.06 387.81 1.75 387.12 1.06 387.81 1.06" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/><polygon points="290.36 231 176.68 344.68 141.32 309.32 194.64 256 0 256 0 206 194.64 206 142.32 153.68 177.68 118.32 290.36 231" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 67)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">bamscrams</text>
+                
+                
+                
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 37, 0)" data-connection-id="out/bamscrams/bamscrams" data-port-id="bamscrams">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            </g><g tabindex="-1" class="node input type-int " data-connection-id="out/minDepth/minDepth" transform="matrix(1, 0, 0, 1, 172.4453125, 456)" data-id="minDepth">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="37" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="27.75" class="inner" style="fill:rgb(195, 195, 195); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 499 365" x="-11" y="-10" width="20" height="20"><title>type_input</title><g id="input"><path d="M316.5,68a181.72,181.72,0,0,0-114.12,40.09L238,143.72a132.5,132.5,0,1,1,1.16,214.39L203.48,393.8A182.5,182.5,0,1,0,316.5,68Z" transform="translate(0 -68)" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/><g id="Layer_22" data-name="Layer 22"><g id="Layer_9_copy_4" data-name="Layer 9 copy 4"><polygon points="290.36 182 176.68 295.68 141.32 260.32 194.64 207 0 207 0 157 194.64 157 142.32 104.68 177.68 69.32 290.36 182" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/></g></g></g></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 67)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">minDepth</text>
+                
+                
+                
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 37, 0)" data-connection-id="out/minDepth/minDepth" data-port-id="minDepth">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            </g><g tabindex="-1" class="node input type-File " data-connection-id="out/reference/reference" transform="matrix(1, 0, 0, 1, 172.4453125, 135)" data-id="reference">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="37" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="27.75" class="inner" style="fill:rgb(195, 195, 195); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 499 462.86" y="-10" x="-11" width="20" height="20"><title>file_input</title><path d="M386.06,0H175V58.29l50,50V50H337.81V163.38h25l86.19.24V412.86H225V353.71l-50,50v59.15H499V112.94Zm1.75,113.45v-41l41.1,41.1Z" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/><polygon points="387.81 1.06 387.81 1.75 387.12 1.06 387.81 1.06" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/><polygon points="290.36 231 176.68 344.68 141.32 309.32 194.64 256 0 256 0 206 194.64 206 142.32 153.68 177.68 118.32 290.36 231" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 67)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">reference</text>
+                
+                
+                
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 37, 0)" data-connection-id="out/reference/reference" data-port-id="reference">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            </g><g tabindex="-1" class="node input type-File " data-connection-id="out/sample_vcf_file/sample_vcf_file" transform="matrix(1, 0, 0, 1, 0, 188.5)" data-id="sample_vcf_file">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="37" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="27.75" class="inner" style="fill:rgb(195, 195, 195); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 499 462.86" y="-10" x="-11" width="20" height="20"><title>file_input</title><path d="M386.06,0H175V58.29l50,50V50H337.81V163.38h25l86.19.24V412.86H225V353.71l-50,50v59.15H499V112.94Zm1.75,113.45v-41l41.1,41.1Z" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/><polygon points="387.81 1.06 387.81 1.75 387.12 1.06 387.81 1.06" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/><polygon points="290.36 231 176.68 344.68 141.32 309.32 194.64 256 0 256 0 206 194.64 206 142.32 153.68 177.68 118.32 290.36 231" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 67)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">sample_vcf_file</text>
+                
+                
+                
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 37, 0)" data-connection-id="out/sample_vcf_file/sample_vcf_file" data-port-id="sample_vcf_file">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            </g><g tabindex="-1" class="node input type-array items-string" data-connection-id="out/bamcramsampleIDs/bamcramsampleIDs" transform="matrix(1, 0, 0, 1, 172.4453125, 777)" data-id="bamcramsampleIDs">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="37" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="27.75" class="inner" style="fill:rgb(195, 195, 195); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 499 365" x="-11" y="-10" width="20" height="20"><title>type_input</title><g id="input"><path d="M316.5,68a181.72,181.72,0,0,0-114.12,40.09L238,143.72a132.5,132.5,0,1,1,1.16,214.39L203.48,393.8A182.5,182.5,0,1,0,316.5,68Z" transform="translate(0 -68)" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/><g id="Layer_22" data-name="Layer 22"><g id="Layer_9_copy_4" data-name="Layer 9 copy 4"><polygon points="290.36 182 176.68 295.68 141.32 260.32 194.64 207 0 207 0 157 194.64 157 142.32 104.68 177.68 69.32 290.36 182" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/></g></g></g></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 67)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">bamcramsampleIDs</text>
+                
+                
+                
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 37, 0)" data-connection-id="out/bamcramsampleIDs/bamcramsampleIDs" data-port-id="bamcramsampleIDs">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            </g><g tabindex="-1" class="node input type-int " data-connection-id="out/ram_germline/ram_germline" transform="matrix(1, 0, 0, 1, 0, 295.5)" data-id="ram_germline">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="37" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="27.75" class="inner" style="fill:rgb(195, 195, 195); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 499 365" x="-11" y="-10" width="20" height="20"><title>type_input</title><g id="input"><path d="M316.5,68a181.72,181.72,0,0,0-114.12,40.09L238,143.72a132.5,132.5,0,1,1,1.16,214.39L203.48,393.8A182.5,182.5,0,1,0,316.5,68Z" transform="translate(0 -68)" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/><g id="Layer_22" data-name="Layer 22"><g id="Layer_9_copy_4" data-name="Layer 9 copy 4"><polygon points="290.36 182 176.68 295.68 141.32 260.32 194.64 207 0 207 0 157 194.64 157 142.32 104.68 177.68 69.32 290.36 182" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/></g></g></g></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 67)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">ram_germline</text>
+                
+                
+                
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 37, 0)" data-connection-id="out/ram_germline/ram_germline" data-port-id="ram_germline">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            </g><g tabindex="-1" class="node input type-int " data-connection-id="out/ram_tumor/ram_tumor" transform="matrix(1, 0, 0, 1, 172.4453125, 242)" data-id="ram_tumor">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="37" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="27.75" class="inner" style="fill:rgb(195, 195, 195); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 499 365" x="-11" y="-10" width="20" height="20"><title>type_input</title><g id="input"><path d="M316.5,68a181.72,181.72,0,0,0-114.12,40.09L238,143.72a132.5,132.5,0,1,1,1.16,214.39L203.48,393.8A182.5,182.5,0,1,0,316.5,68Z" transform="translate(0 -68)" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/><g id="Layer_22" data-name="Layer 22"><g id="Layer_9_copy_4" data-name="Layer 9 copy 4"><polygon points="290.36 182 176.68 295.68 141.32 260.32 194.64 207 0 207 0 157 194.64 157 142.32 104.68 177.68 69.32 290.36 182" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/></g></g></g></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 67)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">ram_tumor</text>
+                
+                
+                
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 37, 0)" data-connection-id="out/ram_tumor/ram_tumor" data-port-id="ram_tumor">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            </g><g tabindex="-1" class="node input type-int " data-connection-id="out/minCore/minCore" transform="matrix(1, 0, 0, 1, 172.4453125, 563)" data-id="minCore">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="37" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="27.75" class="inner" style="fill:rgb(195, 195, 195); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 499 365" x="-11" y="-10" width="20" height="20"><title>type_input</title><g id="input"><path d="M316.5,68a181.72,181.72,0,0,0-114.12,40.09L238,143.72a132.5,132.5,0,1,1,1.16,214.39L203.48,393.8A182.5,182.5,0,1,0,316.5,68Z" transform="translate(0 -68)" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/><g id="Layer_22" data-name="Layer 22"><g id="Layer_9_copy_4" data-name="Layer 9 copy 4"><polygon points="290.36 182 176.68 295.68 141.32 260.32 194.64 207 0 207 0 157 194.64 157 142.32 104.68 177.68 69.32 290.36 182" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/></g></g></g></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 67)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">minCore</text>
+                
+                
+                
+            <g class="port output-port" transform="matrix(1, 0, 0, 1, 37, 0)" data-connection-id="out/minCore/minCore" data-port-id="minCore">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+            </g><g tabindex="-1" class="node output type-File " data-connection-id="in/output_file/output_file" transform="matrix(1, 0, 0, 1, 898.013427734375, 402.5)" data-id="output_file">
+               
+                <g class="core" transform="matrix(1, 0, 0, 1, 0, 0)">
+                    <circle cx="0" cy="0" r="37" class="outer" style="fill:rgb(255, 255, 255); stroke:rgb(154, 154, 154); stroke-width:2px; "/>
+                    <circle cx="0" cy="0" r="27.75" class="inner" style="fill:rgb(195, 195, 195); stroke:none; stroke-width:1px; "/>
+                    
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 499 462.86" x="-7" y="-11" width="20" height="20"><title>file_output</title><polygon points="387.81 1.06 387.81 1.75 387.12 1.06 387.81 1.06" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/><polygon points="499 231 385.32 344.68 349.96 309.32 403.28 256 208.64 256 208.64 206 403.28 206 350.96 153.68 386.32 118.32 499 231" style="stroke:rgb(51, 51, 51); fill:rgb(51, 51, 51); "/><path d="M187.81,163.38l77.69.22H324V112.94L211.06,0H0V462.86H324V298.5H274V412.86H50V50H162.81V163.38Zm25-90.92,41.1,41.1-41.1-.11Z" style="fill:rgb(51, 51, 51); stroke:rgb(51, 51, 51); stroke-width:3px; "/></svg>
+                </g>
+                
+                <text transform="matrix(1.18161 0 0 1.18161 0 67)" class="title label" style="fill:rgb(51, 51, 51); font-size:13px; text-anchor:middle; font-family:sans-serif; ">output_file</text>
+                
+                
+            <g class="port input-port" transform="matrix(1, 0, 0, 1, -37, 4.531193156845207e-15)" data-connection-id="in/output_file/output_file" data-port-id="output_file">
+                <g class="io-port">
+                    <circle cx="0" cy="0" r="7" class="port-handle" style="fill:rgb(154, 154, 154); stroke:none; stroke-width:1px; "/>
+                </g>
+                
+            </g>
+            
+        
+                
+            </g></g>
+        </svg>

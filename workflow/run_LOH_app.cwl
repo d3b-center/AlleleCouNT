@@ -103,6 +103,11 @@ steps:
          
 "sbg:license": Apache License 2.0
 "sbg:publisher": KFDRC
+"sbg:categories":
+- DNA
+- WGS
+- WXS
+- GVCF
 "sbg:links":
 - id: 'https://github.com/d3b-center/tumor-loh-app-dev/releases/tag/v1.0.1'
   label: github-release      

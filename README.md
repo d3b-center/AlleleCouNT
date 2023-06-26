@@ -23,30 +23,36 @@ Tumor tool search in paired proband tumor sample for aligned reads in the region
 ### LOH Inputs
 ```
 Germline tool
+  # Required  
   BS_ID: { doc: provide BS id for germline normal,type: string }
   frequency: { doc: provide popmax cutoff for rare germline variants, type: 'float?', default: 0.01 }
+  # Optional
   ram_germline: {  doc: Provide ram (in GB) based on the size of vcf,type: 'int?', default: 8}
+  # Required for family trios otherwise not required
   peddy_file: { doc: provide ped file for the trio, type: 'File?' }
 Tumor tool
+  # Required
   participant_id: { doc: provide participant id for this run, type: string }
   bamscrams: { doc: tumor input file in cram or bam format with their index file, type: 'File[]' , secondaryFiles: [ { pattern: ".crai", required: false }, { pattern: ".bai", required: false } ] }
-  minDepth: { doc: provide minDepth to consider for tumor reads, type: 'int?', default: 1 }
   reference: { doc: human reference in fasta format with index file, type: File,secondaryFiles: [ .fai ] }
   sample_vcf_file: { doc: provide germline vcf file for this sample, type: File }
+  # Optional
+  minDepth: { doc: provide minDepth to consider for tumor reads, type: 'int?', default: 1 }
   bamcramsampleIDs: { doc: provide unique identifers (in the same order) for cram/bam files provided under bamcrams tag. Default is sample ID pulled from bam/cram files., type: 'string[]?' }
-  ram_tumor: {  doc: Provide ram (in GB) size and number of cram/bam inputs, type: 'int?', default: 16} 
-  minCore: { type: 'int?', default: 16, doc: "Minimum number of cores for tumor tool" }
+  ram_tumor: {  doc: Provide ram (in GB) for tumor tool based on the number cram/bam inputs, type: 'int?', default: 16} 
+  minCore: { type: 'int?', default: 16, doc: "Minimum number of cores for tumor tool based on the number cram/bam inputs" }
 ```
 
 ### LOH Output
 
+LOH application will output a tab-separated values file mapped data from germline tool and tumor tool. 
 ```
 output_file: { type: File, doc: output file from LOH app, outputSource: run_tumor_tool/loh_output_file_tool }
 ```
 
-### Output headers
+#### Output headers
 
-LOH workflow will generate a tab-separated values file with following headers and their description:
+LOH workflow will generate a tab-separated values file with following headers:
 | Headers | Description | 
 |:-------:|:--------:|
 | BS_ID | Sample Id for germline sample | 
@@ -70,8 +76,10 @@ LOH workflow will generate a tab-separated values file with following headers an
 | maternal_germline_vaf | Fraction of reads with the alternate allele from mother |
 | proband_sample_id_tumor_vaf |  Proband variant allele frequency from specific tumor sample|
 | proband_sample_id_tumor_depth | Depth of coverage from specific tumor sample | 
-| proband_sample_id_tumor_alt_depth | Allele count at site for proband for specific tumor sample|
-| proband_sample_id_tumor_ref_depth | Reference count at site for proband for specific tumor sample |
+| proband_sample_id_tumor_alt_depth | Allele count at site from specific proband tumor sample|
+| proband_sample_id_tumor_ref_depth | Reference count at site from specific proband tumor sample |
+
+![WF Visualized](https://github.com/d3b-center/d3b-research-workflows/raw/master/doc/loh.png)
 
 ### Running it locally on a laptop?
 

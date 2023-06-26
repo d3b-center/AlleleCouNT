@@ -1,6 +1,6 @@
 # Kids First Loss of Heterozygosity (LOH)
 
-![data service logo](https://github.com/d3b-center/tumor-loh-app-dev/tree/feature/public-release/docs/logo/kids_first_logo.svg)
+![data service logo](https://github.com/d3b-center/d3b-research-workflows/raw/master/doc/kfdrc-logo-sm.png)
 
 The Kids First Loss of Heterozygosity (aka LOH) is a CWL workflow that assesses the loss of heterozygosity in the tumor for rare germline calls filtered by gnomad_3_1_1_AF_popmax (typically < 0.01) or when gnomad_3_1_1_AF_popmax is not defined. This workflow is designed to analyze LOH for family trios as well as multiple proband tumor samples. 
 
@@ -79,7 +79,6 @@ LOH workflow will generate a tab-separated values file with following headers:
 | proband_sample_id_tumor_alt_depth | Allele count at site from specific proband tumor sample|
 | proband_sample_id_tumor_ref_depth | Reference count at site from specific proband tumor sample |
 
-![WF Visualized](https://github.com/d3b-center/tumor-loh-app-dev/tree/feature/public-release/docs/logo/loh_wf.svg)
 
 ### Running it locally on a laptop?
 

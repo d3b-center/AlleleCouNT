@@ -8,7 +8,7 @@ Moreover, this workflow has been deployed on [cavatica](https://cavatica.sbgenom
 
 ### Application Description
 
-The Kids First Loss of Heterozygosity application is divided into two tools: Germline tool and tumor tool.
+The Kids First Loss of Heterozygosity application is divided into two tools: Germline tool and Tumor tool.
 
 #### Docker
 Dockerfile: https://github.com/d3b-center/bixtools/tree/master/LOH
@@ -47,7 +47,7 @@ Tumor tool
 
 LOH application will output a tab-separated values file mapped data from germline tool and tumor tool. 
 ```
-output_file: { type: File, doc: output file from LOH app, outputSource: run_tumor_tool/loh_output_file_tool }
+output_file: { type: File, doc: A tsv file with gathered data from germline and tumor tool }
 ```
 
 #### Output headers

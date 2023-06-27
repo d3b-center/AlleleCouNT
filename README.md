@@ -84,7 +84,7 @@ LOH workflow will generate a tab-separated values file with following headers:
 | proband_sample_id_tumor_alt_depth | Allele count at site from specific proband tumor sample|
 | proband_sample_id_tumor_ref_depth | Reference count at site from specific proband tumor sample |
 
-More detailed can be found [here](https://github.com/d3b-center/tumor-loh-app-dev/tree/master/docs/README.md)
+More information can be found [here](https://github.com/d3b-center/tumor-loh-app-dev/tree/master/docs/README.md)
 
 ### Running it locally on a laptop?
 

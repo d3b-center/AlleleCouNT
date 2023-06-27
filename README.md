@@ -4,8 +4,6 @@
 
 The Kids First Loss of Heterozygosity (aka LOH) is a CWL workflow that assesses the loss of heterozygosity in the tumor for rare germline calls filtered by gnomad_3_1_1_AF_popmax (typically < 0.01) or when gnomad_3_1_1_AF_popmax is not defined. This workflow is designed to analyze LOH for family trios as well as multiple proband tumor samples. 
 
-Moreover, this workflow has been deployed on [cavatica](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/apps/Loss_of_Heterozygosity). It was tested with a [proband only run](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/tasks/522d128a-2195-4c9c-8339-1709da16821d/) and a [trio run](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/tasks/d7f6b667-35ef-46a7-a666-970a78ef3175/)
-
 ### Application Description
 
 The Kids First Loss of Heterozygosity application is divided into two tools: Germline tool and Tumor tool.
@@ -18,36 +16,37 @@ Dockerfile: https://github.com/d3b-center/bixtools/tree/master/LOH
 Germline tool filters germline annotations to retain variants based on gnomad_3_1_1_AF_popmax (typically < 0.01) or when gnomad_3_1_1_AF_popmax is not defined. It requires vcf file, proband sample id, ram as required inputs and peddy file as optional input which is required for family trios. It outputs variant information such as gene, chr, start, stop, ref/alt alleles, ref/alt allele depths, variant allele frequency and list of coordinates that will be an input to tumor tool.
 
 #### Tumor Tool
-Tumor tool search in paired proband tumor sample for aligned reads in the regions where rare variants from the germline tool exists and exact allele/reference count, allele/reference depth and calculate the variant allele frequency VAF. Tumor tool have the capability to search multiple tumor samples for proband and if applicable, parental and maternal tumor samples. To exact reads from the bam/cram files, this tool utilizes [bam-readcount](https://github.com/genome/bam-readcount) and wraps it with python script to shape the output in a tabular format. 
+Tumor tool search in paired proband tumor sample for aligned reads in the regions where rare variants from the germline tool exists and exact allele/reference count, allele/reference depth and calculate variant allele frequency(VAF). Tumor tool have the capability to search in multiple tumor samples for proband and if applicable, parental and maternal tumor samples. To exact reads from the bam/cram files, this tool utilizes [bam-readcount](https://github.com/genome/bam-readcount) and wraps it with python script to shape the output in a tabular format. 
 
 ### LOH Inputs
 ```
 Germline tool
   # Required  
-  BS_ID: { doc: provide BS id for germline normal,type: string }
-  frequency: { doc: provide popmax cutoff for rare germline variants, type: 'float?', default: 0.01 }
+  BS_ID:{ doc: provide BS id for germline normal,type: string }
+  frequency:{ doc: provide popmax cutoff for rare germline variants, type: 'float?', default: 0.01 }
   # Optional
-  ram_germline: {  doc: Provide ram (in GB) based on the size of vcf,type: 'int?', default: 8}
+  ram_germline:{  doc: Provide ram (in GB) based on the size of vcf,type: 'int?', default: 8}
   # Required for family trios otherwise not required
-  peddy_file: { doc: provide ped file for the trio, type: 'File?' }
+  peddy_file:{ doc: provide ped file for the trio, type: 'File?' }
+
 Tumor tool
   # Required
-  participant_id: { doc: provide participant id for this run, type: string }
-  bamscrams: { doc: tumor input file in cram or bam format with their index file, type: 'File[]' , secondaryFiles: [ { pattern: ".crai", required: false }, { pattern: ".bai", required: false } ] }
-  reference: { doc: human reference in fasta format with index file, type: File,secondaryFiles: [ .fai ] }
+  participant_id:{ doc: provide participant id for this run, type: string }
+  bamscrams:{ doc: tumor input file in cram or bam format with their index file, type: 'File[]' , secondaryFiles: [ { pattern: ".crai", required: false }, { pattern: ".bai", required: false } ] }
+  reference:{ doc: human reference in fasta format with index file, type: File,secondaryFiles: [ .fai ] }
   sample_vcf_file: { doc: provide germline vcf file for this sample, type: File }
   # Optional
-  minDepth: { doc: provide minDepth to consider for tumor reads, type: 'int?', default: 1 }
+  minDepth:{ doc: provide minDepth to consider for tumor reads, type: 'int?', default: 1 }
   bamcramsampleIDs: { doc: provide unique identifers (in the same order) for cram/bam files provided under bamcrams tag. Default is sample ID pulled from bam/cram files., type: 'string[]?' }
-  ram_tumor: {  doc: Provide ram (in GB) for tumor tool based on the number cram/bam inputs, type: 'int?', default: 16} 
-  minCore: { type: 'int?', default: 16, doc: "Minimum number of cores for tumor tool based on the number cram/bam inputs" }
+  ram_tumor:{  doc: Provide ram (in GB) for tumor tool based on the number cram/bam inputs, type: 'int?', default: 16} 
+  minCore:{ type: 'int?', default: 16, doc: "Minimum number of cores for tumor tool based on the number cram/bam inputs" }
 ```
 
 ### LOH Output
 
 LOH application will output a tab-separated values file mapped data from germline tool and tumor tool. 
 ```
-output_file: { type: File, doc: A tsv file with gathered data from germline and tumor tool }
+output_file:{ type: File, doc: A tsv file with gathered data from germline and tumor tool }
 ```
 
 #### Output headers

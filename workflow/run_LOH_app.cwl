@@ -39,7 +39,7 @@ doc: |
     # Required
     participant_id: { doc: provide participant id for this run, type: string }
     bamscrams: { doc: tumor input file in cram or bam format with their index file, type: 'File[]' , secondaryFiles: [ { pattern: ".crai", required: false }, { pattern: ".bai", required: false } ] }
-    reference: { doc: human reference in fasta format with index file, type: File,secondaryFiles: [ .fai ] }
+    reference: { doc: human reference in fasta format with index file, type: File,secondaryFiles: [ .fai ],"sbg:suggestedValue": {class: File, path: 60639014357c3a53540ca7a3, name: Homo_sapiens_assembly38.fasta} }
     sample_vcf_file: { doc: provide germline vcf file for this sample, type: File }
     # Optional
     minDepth: { doc: provide minDepth to consider for tumor reads, type: 'int?', default: 1 }

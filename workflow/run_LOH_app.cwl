@@ -109,5 +109,5 @@ steps:
 - WXS
 - GVCF
 "sbg:links":
-- id: 'https://github.com/d3b-center/tumor-loh-app-dev/releases/tag/v1.0.1'
+- id: 'https://github.com/d3b-center/tumor-loh-app-dev/releases/tag/v1.0.2'
   label: github-release      

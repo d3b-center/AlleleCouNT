@@ -20,6 +20,14 @@ Order of operations: This workflow runs bcftools to extract data and prepare lis
 - ram_tumor: ram for tumor tool, which is strongly connected with the size of the cram files and number of cram files provided 
 - mincore: provide number of processor. Each cram will be split into 32 parts for multiprocessing and results will be merge back. High number of processors are recommended. 
 
-## output
+## Output
 
 - output_file: a tsv file with mapped variant data from germline and tumor tool containing germline VAF and tumor VAF
+
+## Demo Proband-only Cavatica Task
+
+![LOH schematic](https://github.com/d3b-center/tumor-loh-app-dev/blob/master/docs/logo/proband_run.png)
+
+## Demo Family-trio Cavatica Task
+
+![LOH schematic](https://github.com/d3b-center/tumor-loh-app-dev/blob/master/docs/logo/proband_run.png)

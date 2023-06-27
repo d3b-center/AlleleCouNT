@@ -8,8 +8,11 @@ The Kids First Loss of Heterozygosity (aka LOH) is a CWL workflow that assesses 
 
 The Kids First Loss of Heterozygosity application is divided into two tools: Germline tool and Tumor tool.
 
-#### Docker
-Dockerfile: https://github.com/d3b-center/bixtools/tree/master/LOH
+#### Basic info
+- Dockerfile: https://github.com/d3b-center/bixtools/tree/master/LOH/1.0.1
+- tested with
+    - Seven Bridges Cavatica Platform: https://cavatica.sbgenomics.com/
+    - cwltool: https://github.com/common-workflow-language/cwltool/releases/tag/3.1.20221201130942
 
 #### Germline Tool
 
@@ -19,13 +22,13 @@ Germline tool filters germline annotations to retain variants based on gnomad_3_
 Tumor tool search in paired proband tumor sample for aligned reads in the regions where rare variants from the germline tool exists and exact allele/reference count, allele/reference depth and calculate variant allele frequency(VAF). Tumor tool have the capability to search in multiple tumor samples for proband and if applicable, parental and maternal tumor samples. To exact reads from the bam/cram files, this tool utilizes [bam-readcount](https://github.com/genome/bam-readcount) and wraps it with python script to shape the output in a tabular format. 
 
 ### LOH Inputs
-```
+```yaml
 Germline tool
   # Required  
-  BS_ID:{ doc: provide BS id for germline normal,type: string }
+  BS_ID:{ doc: provide BS id for germline normal, type: string }
   frequency:{ doc: provide popmax cutoff for rare germline variants, type: 'float?', default: 0.01 }
   # Optional
-  ram_germline:{  doc: Provide ram (in GB) based on the size of vcf,type: 'int?', default: 8}
+  ram_germline:{  doc: Provide ram (in GB) based on the size of vcf, type: 'int?', default: 8}
   # Required for family trios otherwise not required
   peddy_file:{ doc: provide ped file for the trio, type: 'File?' }
 
@@ -43,12 +46,12 @@ Tumor tool
 ```
 ### LOH schematic
 
-![LOH schematic](https://github.com/d3b-center/tumor-loh-app-dev/blob/master/docs/logo/chop_logo.svg)
+![LOH schematic](https://github.com/d3b-center/tumor-loh-app-dev/blob/master/docs/logo/loh.png)
 
 ### LOH Output
 
 LOH application will output a tab-separated values file mapped data from germline tool and tumor tool. 
-```
+```yaml
 output_file:{ type: File, doc: A tsv file with gathered data from germline and tumor tool }
 ```
 
@@ -81,6 +84,7 @@ LOH workflow will generate a tab-separated values file with following headers:
 | proband_sample_id_tumor_alt_depth | Allele count at site from specific proband tumor sample|
 | proband_sample_id_tumor_ref_depth | Reference count at site from specific proband tumor sample |
 
+More detailed can be found [here](https://github.com/d3b-center/tumor-loh-app-dev/tree/master/docs/README.md)
 
 ### Running it locally on a laptop?
 

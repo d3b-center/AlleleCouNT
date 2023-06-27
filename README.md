@@ -41,6 +41,9 @@ Tumor tool
   ram_tumor:{  doc: Provide ram (in GB) for tumor tool based on the number cram/bam inputs, type: 'int?', default: 16} 
   minCore:{ type: 'int?', default: 16, doc: "Minimum number of cores for tumor tool based on the number cram/bam inputs" }
 ```
+### LOH schematic
+
+![LOH schematic](https://github.com/d3b-center/tumor-loh-app-dev/blob/master/docs/logo/chop_logo.svg)
 
 ### LOH Output
 

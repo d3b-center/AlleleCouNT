@@ -19,7 +19,7 @@ The Kids First Loss of Heterozygosity application is divided into two tools: Ger
 Germline tool filters germline annotations to retain variants based on gnomad_3_1_1_AF_popmax (typically < 0.01) or when gnomad_3_1_1_AF_popmax is not defined. It requires vcf file, proband sample id, ram as required inputs and peddy file as optional input which is required for family trios. It outputs variant information such as gene, chr, start, stop, ref/alt alleles, ref/alt allele depths, variant allele frequency and list of coordinates that will be an input to tumor tool.
 
 #### Tumor Tool
-Tumor tool search in paired proband tumor sample for aligned reads in the regions where rare variants from the germline tool exists and exact allele/reference count, allele/reference depth and calculate variant allele frequency(VAF). Tumor tool have the capability to search in multiple tumor samples for proband and if applicable, parental and maternal tumor samples. To exact reads from the bam/cram files, this tool utilizes [bam-readcount](https://github.com/genome/bam-readcount) and wraps it with python script to shape the output in a tabular format. 
+Search in paired proband tumor sample for aligned reads in the regions where rare variants from the germline exist and exact allele/reference count, allele/reference depth, and calculate variant allele frequency(VAF). Tumor tool has the capability to search in multiple tumor samples for proband and if applicable, paternal and maternal tumor samples. To extract reads from the bam/cram files, this tool utilizes [bam-readcount](https://github.com/genome/bam-readcount) and wraps it with a python script to shape the output in a tabular format. 
 
 ### LOH Inputs
 ```yaml

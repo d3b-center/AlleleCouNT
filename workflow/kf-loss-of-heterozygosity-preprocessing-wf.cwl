@@ -103,7 +103,8 @@ steps:
       minCore: minCore
     out:
       [ loh_output_file_tool,log_output ]
-         
+$namespaces:
+  sbg: https://sevenbridges.com         
 "sbg:license": Apache License 2.0
 "sbg:publisher": KFDRC
 "sbg:categories":

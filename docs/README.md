@@ -2,7 +2,7 @@
 
 ![data service logo](https://github.com/d3b-center/d3b-research-workflows/raw/master/doc/kfdrc-logo-sm.png)
 
-LOH workflow assesses the loss of heterozygosity (LOH) in the tumor for rare germline variants. 
+Preprocessing LOH assesses the loss of heterozygosity (LOH) in the tumor for rare germline variants. 
 Order of operations: This workflow runs bcftools to extract data and prepare list of locations from vcf provided and feed it into bam-readcount to compute VAF and later parse, merge germline and tumor data together. 
 
 ## Inputs

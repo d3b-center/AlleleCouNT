@@ -3,7 +3,7 @@
 cwlVersion: v1.2
 class: CommandLineTool
 id: run_gene_extract_list_prepare
-label: run_germline
+label: germline_tool
 doc: collects info from bcftool and add gene, prepare directory of list for bam-readcount tool
 requirements:
 - class: ShellCommandRequirement

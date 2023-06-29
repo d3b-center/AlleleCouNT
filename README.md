@@ -2,17 +2,17 @@
 
 ![data service logo](https://github.com/d3b-center/d3b-research-workflows/raw/master/doc/kfdrc-logo-sm.png)
 
-The Kids First Loss of Heterozygosity (aka LOH) is a CWL workflow that assesses the loss of heterozygosity in the tumor for rare germline calls filtered by gnomad_3_1_1_AF_popmax (typically < 0.01) or when gnomad_3_1_1_AF_popmax is not defined. This workflow is designed to analyze LOH for family trios as well as multiple proband tumor samples. 
-
-### Application Description
-
-The Kids First Loss of Heterozygosity application is divided into two tools: Germline tool and Tumor tool.
+The Kids First Loss of Heterozygosity Preprocessing (aka LOH) is a CWL workflow that assesses the loss of heterozygosity in the tumor for rare germline calls filtered by gnomad_3_1_1_AF_popmax (typically < 0.01) or when gnomad_3_1_1_AF_popmax is not defined. This preprocessing is designed to compute variant allele frequency (VAF) for multiple proband tumor samples and can also map germline VAF for family trios if trio germline VCF file is provided.
 
 #### Basic info
 - Dockerfile: https://github.com/d3b-center/bixtools/tree/master/LOH/1.0.1
 - tested with
     - Seven Bridges Cavatica Platform: https://cavatica.sbgenomics.com/
     - cwltool: https://github.com/common-workflow-language/cwltool/releases/tag/3.1.20221201130942
+
+### Application Description
+
+The Kids First Loss of Heterozygosity application is divided into two tools: Germline tool and Tumor tool.
 
 #### Germline Tool
 
@@ -57,7 +57,7 @@ output_file:{ type: File, doc: A tsv file with gathered data from germline and t
 
 #### Output headers
 
-LOH workflow will generate a tab-separated values file with following headers:
+Preprocessing LOH will generate a tab-separated values file with following headers:
 | Headers | Description | 
 |:-------:|:--------:|
 | BS_ID | Sample Id for germline sample | 
@@ -88,7 +88,7 @@ More information can be found [here](https://github.com/d3b-center/tumor-loh-app
 
 ### Running it locally on a laptop?
 
-It is recommended to run this workflow on a system with a high number of CPUs and memory (>=16 GB). The basic requirement is a running docker engine and CWL tools. Command line to run the LOH workflow locally is:
+It is recommended to run this CWL workflow on a system with a high number of CPUs and memory (>=16 GB). The basic requirement is a running docker engine and CWL tools. Command line to run the LOH workflow locally is:
 
 ```
 cwltool workflow/run_LOH_app.cwl sample_input.yml

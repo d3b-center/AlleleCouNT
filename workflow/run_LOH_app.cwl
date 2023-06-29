@@ -2,21 +2,24 @@
 
 cwlVersion: v1.2
 class: Workflow
-id: run_LOH_app
+id: kf-loss-of-heterozygosity-preprocessing
 label: Kids First Loss of Heterozygosity
 doc: | 
  # Kids First Loss of Heterozygosity (LOH)
 
   ![data service logo](https://github.com/d3b-center/d3b-research-workflows/raw/master/doc/kfdrc-logo-sm.png)
 
-  The Kids First Loss of Heterozygosity (aka LOH) is a CWL workflow that assesses the loss of heterozygosity in the tumor for rare germline calls filtered by gnomad_3_1_1_AF_popmax (typically < 0.01) or when gnomad_3_1_1_AF_popmax is not defined. This workflow is designed to analyze LOH for family trios as well as multiple proband tumor samples. 
+  The Kids First Loss of Heterozygosity Preprocessing (aka LOH) is a CWL workflow that assesses the loss of heterozygosity in the tumor for rare germline calls filtered by gnomad_3_1_1_AF_popmax (typically < 0.01) or when gnomad_3_1_1_AF_popmax is not defined. This preprocessing is designed to compute variant allele frequency (VAF) for multiple proband tumor samples and can also map germline VAF for family trios if trio germline VCF file is provided.
+  
+  #### Basic info
+  - Dockerfile: https://github.com/d3b-center/bixtools/tree/master/LOH/1.0.1
+  - tested with
+    - Seven Bridges Cavatica Platform: https://cavatica.sbgenomics.com/
+    - cwltool: https://github.com/common-workflow-language/cwltool/releases/tag/3.1.20221201130942
 
   ### Description
 
   The Kids First Loss of Heterozygosity application is divided into two tools: Germline tool and Tumor tool.
-
-  #### Docker
-  Dockerfile: https://github.com/d3b-center/bixtools/tree/master/LOH
 
   #### Germline Tool
 
@@ -39,7 +42,7 @@ doc: |
     # Required
     participant_id: { doc: provide participant id for this run, type: string }
     bamscrams: { doc: tumor input file in cram or bam format with their index file, type: 'File[]' , secondaryFiles: [ { pattern: ".crai", required: false }, { pattern: ".bai", required: false } ] }
-    reference: { doc: human reference in fasta format with index file, type: File,secondaryFiles: [ .fai ],"sbg:suggestedValue": {class: File, path: 60639014357c3a53540ca7a3, name: Homo_sapiens_assembly38.fasta} }
+    reference: { doc: human reference in fasta format with index file, type: File, secondaryFiles: [ .fai ], "sbg:suggestedValue": { class: File, path: 60639014357c3a53540ca7a3, name: Homo_sapiens_assembly38.fasta, secondaryFiles: [{class: File, path: 60639016357c3a53540ca7af, name: Homo_sapiens_assembly38.fasta.fai}]} }
     sample_vcf_file: { doc: provide germline vcf file for this sample, type: File }
     # Optional
     minDepth: { doc: provide minDepth to consider for tumor reads, type: 'int?', default: 1 }
@@ -104,10 +107,12 @@ steps:
 "sbg:license": Apache License 2.0
 "sbg:publisher": KFDRC
 "sbg:categories":
-- DNA
+- VAF
+- LOH
 - WGS
 - WXS
 - GVCF
+- TRIOS
 "sbg:links":
 - id: 'https://github.com/d3b-center/tumor-loh-app-dev/releases/tag/v1.0.2'
   label: github-release      

@@ -1,35 +1,63 @@
-# D3b: Loss of Heterozygosity (LOH)
+# Kids First Loss of Heterozygosity (LOH)
 
-This CWL workflow assesses the loss of heterozygosity(LOH) in the tumor for rare germline variants (gnomad_3_1_1_AF_popmax < 0.01 or gnomad_3_1_1_AF_popmax == '.'). This workflow has been deployed on [cavatica](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/apps/Loss_of_Heterozygosity). It was tested with a [proband only run](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/tasks/522d128a-2195-4c9c-8339-1709da16821d/) and a [trio run](https://cavatica.sbgenomics.com/u/d3b-bixu/tumor-loh-dev/tasks/d7f6b667-35ef-46a7-a666-970a78ef3175/)
+![data service logo](https://github.com/d3b-center/d3b-research-workflows/raw/master/doc/kfdrc-logo-sm.png)
 
-### Repo Description
+The Kids First Loss of Heterozygosity Preprocessing (aka LOH) is a CWL workflow that assesses the loss of heterozygosity in the tumor for rare germline calls filtered by gnomad_3_1_1_AF_popmax (typically < 0.01) or when gnomad_3_1_1_AF_popmax is not defined. This preprocessing is designed to compute variant allele frequency (VAF) for multiple proband tumor samples and can also map germline VAF for family trios if trio germline VCF file is provided.
 
-This workflow is divided into two tools: Germline tool and tumor tool.
+#### Basic info
+- Dockerfile: https://github.com/d3b-center/bixtools/tree/master/LOH/1.0.1
+- tested with
+    - Seven Bridges Cavatica Platform: https://cavatica.sbgenomics.com/
+    - cwltool: https://github.com/common-workflow-language/cwltool/releases/tag/3.1.20221201130942
 
-Here are the basic steps for the LOH assessment workflow:
+### Application Description
 
-* Filter germline annotations to retain variants with gnomad_3_1_1_AF_popmax < 0.01 or gnomad_3_1_1_AF_popmax not defined performed by the germline tool (this gets us rare germline variants).
-* Gather variant information (gene, chr, start, stop, ref/alt alleles, ref/alt allele depths, VAF) covered by the germline tool.
-* Search in a paired tumor sample (example match to above germline) and, if applicable, parental germline samples, for the same variant and calculate the VAF covered by tumor tool.
-* LOH will create an output file with headers (BS_id, gene, chr, start, stop, ref/alt alleles, ref/alt allele depths, VAF) for each of: proband germline, proband tumor, paternal germline, maternal germline covered by the tumor tool.
+The Kids First Loss of Heterozygosity application is divided into two tools: Germline tool and Tumor tool.
 
+#### Germline Tool
 
-(Optional) This workflow has the ability to analyze LOH for trios, with multiple tumor samples. The input requirement for family trios is a trio vcf, a peddy file, and a tumor cram file for the proband. Note: The user can provide multiple .cram or.bam files.
+Germline tool filters germline annotations to retain variants based on gnomad_3_1_1_AF_popmax (typically < 0.01) or when gnomad_3_1_1_AF_popmax is not defined. It requires vcf file, proband sample id, ram as required inputs and peddy file as optional input which is required for family trios. It outputs variant information such as gene, chr, start, stop, ref/alt alleles, ref/alt allele depths, variant allele frequency and list of coordinates that will be an input to tumor tool.
 
+#### Tumor Tool
+Search in paired proband tumor sample for aligned reads in the regions where rare variants from the germline exist and exact allele/reference count, allele/reference depth, and calculate variant allele frequency(VAF). Tumor tool has the capability to search in multiple tumor samples for proband and if applicable, paternal and maternal tumor samples. To extract reads from the bam/cram files, this tool utilizes [bam-readcount](https://github.com/genome/bam-readcount) and wraps it with a python script to shape the output in a tabular format. 
 
-### Running it locally on a laptop?
+### LOH Inputs
+```yaml
+Germline tool
+  # Required  
+  BS_ID:{ doc: provide BS id for germline normal, type: string }
+  frequency:{ doc: provide popmax cutoff for rare germline variants, type: 'float?', default: 0.01 }
+  # Optional
+  ram_germline:{  doc: Provide ram (in GB) based on the size of vcf, type: 'int?', default: 8}
+  # Required for family trios otherwise not required
+  peddy_file:{ doc: provide ped file for the trio, type: 'File?' }
 
-
-It is recommended to run this workflow on a system with a high number of CPUs and memory (>=16 GB). The basic requirement is a running docker engine and CWL tools. Command line to run the LOH workflow locally is:
-
+Tumor tool
+  # Required
+  participant_id:{ doc: provide participant id for this run, type: string }
+  bamscrams:{ doc: tumor input file in cram or bam format with their index file, type: 'File[]' , secondaryFiles: [ { pattern: ".crai", required: false }, { pattern: ".bai", required: false } ] }
+  reference:{ doc: human reference in fasta format with index file, type: File,secondaryFiles: [ .fai ] }
+  sample_vcf_file: { doc: provide germline vcf file for this sample, type: File }
+  # Optional
+  minDepth:{ doc: provide minDepth to consider for tumor reads, type: 'int?', default: 1 }
+  bamcramsampleIDs: { doc: provide unique identifers (in the same order) for cram/bam files provided under bamcrams tag. Default is sample ID pulled from bam/cram files., type: 'string[]?' }
+  ram_tumor:{  doc: Provide ram (in GB) for tumor tool based on the number cram/bam inputs, type: 'int?', default: 16} 
+  minCore:{ type: 'int?', default: 16, doc: "Minimum number of cores for tumor tool based on the number cram/bam inputs" }
 ```
-cwltool workflow/run_LOH_app.cwl sample_input.yml
+### LOH schematic
+
+![LOH schematic](https://github.com/d3b-center/tumor-loh-app-dev/blob/master/docs/logo/loh.png)
+
+### LOH Output
+
+LOH application will output a tab-separated values file mapped data from germline tool and tumor tool. 
+```yaml
+output_file:{ type: File, doc: A tsv file with gathered data from germline and tumor tool }
 ```
-Note: Inputs to the workflow need to be defined in sample_input.yml.
 
-### Output headers
+#### Output headers
 
-LOH workflow will generate a output file with following headers:
+Preprocessing LOH will generate a tab-separated values file with following headers:
 | Headers | Description | 
 |:-------:|:--------:|
 | BS_ID | Sample Id for germline sample | 
@@ -39,19 +67,30 @@ LOH workflow will generate a output file with following headers:
 | end | End position |
 | ref | Reference allele |
 | alt | Alternate Allele |
-| proband_germline_ref_depth | Reference depth from germline for proband |
-| proband_germline_alt_depth | Alternate depth from germline for proband |
-| proband_germline_depth | Total number of reads overlapping a site for proband  |
-| proband_germline_vaf | Fraction of reads with the alternate allele for proband |
-| paternal_germline_ref_depth | Reference depth from germline for father |
-| paternal_germline_alt_depth | Alternate depth from germline for father |
-| paternal_germline_depth | Total number of reads overlapping a site for father |
-| paternal_germline_vaf | Fraction of reads with the alternate allele for father |
-| maternal_germline_ref_depth | Reference depth from germline for mother |
-| maternal_germline_alt_depth | Alternate depth from germline for mother |
-| maternal_germline_depth | Total number of reads overlapping a site for mother  |
-| maternal_germline_vaf | Fraction of reads with the alternate allele for mother |
-| proband_sample_id_tumor_vaf | Variant Allele frequency from tumor for proband for specific tumor sample|
-| proband_sample_id_tumor_depth | Depth of coverage for specific tumor sample | 
-| proband_sample_id_tumor_alt_depth | Allele count at site for proband for specific tumor sample|
-| proband_sample_id_tumor_ref_depth | Reference count at site for proband for specific tumor sample |
+| proband_germline_ref_depth | Reference depth from germline from germline proband |
+| proband_germline_alt_depth | Alternate depth from germline from germline proband |
+| proband_germline_depth | Total number of reads overlapping a site from germline proband  |
+| proband_germline_vaf | Fraction of reads with the alternate allele from germline proband |
+| paternal_germline_ref_depth | Reference depth from germline from paternal germline |
+| paternal_germline_alt_depth | Alternate depth from germline from paternal germline |
+| paternal_germline_depth | Total number of reads overlapping a site from paternal germline |
+| paternal_germline_vaf | Fraction of reads with the alternate allele from paternal germline |
+| maternal_germline_ref_depth | Reference depth from maternal germline |
+| maternal_germline_alt_depth | Alternate depth from maternal germline |
+| maternal_germline_depth | Total number of reads overlapping a site from mother  |
+| maternal_germline_vaf | Fraction of reads with the alternate allele from mother |
+| proband_sample_id_tumor_vaf |  Proband variant allele frequency from specific tumor sample|
+| proband_sample_id_tumor_depth | Depth of coverage from specific tumor sample | 
+| proband_sample_id_tumor_alt_depth | Allele count at site from specific proband tumor sample|
+| proband_sample_id_tumor_ref_depth | Reference count at site from specific proband tumor sample |
+
+More information can be found [here](https://github.com/d3b-center/tumor-loh-app-dev/tree/master/docs/README.md)
+
+### Running it locally on a laptop?
+
+It is recommended to run this CWL workflow on a system with a high number of CPUs and memory (>=16 GB). The basic requirement is a running docker engine and CWL tools. Command line to run the LOH workflow locally is:
+
+```
+cwltool workflow/run_LOH_app.cwl sample_input.yml
+```
+Note: Inputs to the workflow need to be defined in sample_input.yml.

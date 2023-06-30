@@ -3,6 +3,7 @@
 cwlVersion: v1.2
 class: CommandLineTool
 id: run_readcount_parser
+label: tumor_tool
 doc: run bam-readcountparser the bam-readcount output and extract inner join between data from vcf (germline) and cram/bam file (tumor)
 requirements:
 - class: ShellCommandRequirement

@@ -30,4 +30,4 @@ Order of operations: This workflow runs bcftools to extract data and prepare lis
 
 ## Demo Family-trio Cavatica Task
 
-![LOH schematic](https://github.com/d3b-center/tumor-loh-app-dev/blob/master/docs/logo/proband_run.png)
+![LOH schematic](https://github.com/d3b-center/tumor-loh-app-dev/blob/master/docs/logo/family_trio_run.png)

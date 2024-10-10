@@ -1,8 +1,8 @@
-# Kids First Loss of Heterozygosity (LOH)
+# Kids First Allele Counter (AlleleCouNT)
 
 ![data service logo](https://github.com/d3b-center/d3b-research-workflows/raw/master/doc/kfdrc-logo-sm.png)
 
-The Kids First Loss of Heterozygosity Preprocessing (aka LOH) is a CWL workflow that assesses the loss of heterozygosity in the tumor for rare germline calls filtered by gnomad_3_1_1_AF_popmax (typically < 0.01) or when gnomad_3_1_1_AF_popmax is not defined. This preprocessing is designed to compute variant allele frequency (VAF) for multiple proband tumor samples and can also map germline VAF for family trios if trio germline VCF file is provided.
+The Kids First Allele Counter (aka AlleleCouNT) is a CWL workflow that assesses allele depth in normal and tumor DNA sequencing data across rare germline calls filtered by gnomad_3_1_1_AF_popmax (typically < 0.01). This preprocessing is designed to compute variant allele frequency (VAF) for proband germline and tumor samples and can also map germline VAF for family trios if trio germline VCF file is provided.
 
 #### Basic info
 - Dockerfile: https://github.com/d3b-center/bixtools/tree/master/LOH/1.0.1
@@ -12,7 +12,7 @@ The Kids First Loss of Heterozygosity Preprocessing (aka LOH) is a CWL workflow 
 
 ### Application Description
 
-The Kids First Loss of Heterozygosity application is divided into two tools: Germline tool and Tumor tool.
+The Kids First AlleleCouNT application is divided into two tools: Germline tool and Tumor tool.
 
 #### Germline Tool
 
@@ -21,7 +21,7 @@ Germline tool filters germline annotations to retain variants based on gnomad_3_
 #### Tumor Tool
 Search in paired proband tumor sample for aligned reads in the regions where rare variants from the germline exist and exact allele/reference count, allele/reference depth, and calculate variant allele frequency(VAF). Tumor tool has the capability to search in multiple tumor samples for proband and if applicable, paternal and maternal tumor samples. To extract reads from the bam/cram files, this tool utilizes [bam-readcount](https://github.com/genome/bam-readcount) and wraps it with a python script to shape the output in a tabular format. 
 
-### LOH Inputs
+### AlleleCouNT Inputs
 ```yaml
 Germline tool
   # Required  
@@ -44,20 +44,20 @@ Tumor tool
   ram_tumor:{  doc: Provide ram (in GB) for tumor tool based on the number cram/bam inputs, type: 'int?', default: 16} 
   minCore:{ type: 'int?', default: 16, doc: "Minimum number of cores for tumor tool based on the number cram/bam inputs" }
 ```
-### LOH schematic
+### AlleleCouNT schematic
 
-![LOH schematic](https://github.com/d3b-center/tumor-loh-app-dev/blob/master/docs/logo/loh.png)
+![AlleleCouNT schematic](https://github.com/d3b-center/tumor-loh-app-dev/blob/master/docs/logo/loh.png)
 
-### LOH Output
+### AlleleCouNT Output
 
-LOH application will output a tab-separated values file mapped data from germline tool and tumor tool. 
+AlleleCouNT application will output a tab-separated values file mapped data from germline tool and tumor tool. 
 ```yaml
 output_file:{ type: File, doc: A tsv file with gathered data from germline and tumor tool }
 ```
 
 #### Output headers
 
-Preprocessing LOH will generate a tab-separated values file with following headers:
+Preprocessing AlleleCouNT will generate a tab-separated values file with following headers:
 | Headers | Description | 
 |:-------:|:--------:|
 | BS_ID | Sample Id for germline sample | 
@@ -88,7 +88,7 @@ More information can be found [here](https://github.com/d3b-center/tumor-loh-app
 
 ### Running it locally on a laptop?
 
-It is recommended to run this CWL workflow on a system with a high number of CPUs and memory (>=16 GB). The basic requirement is a running docker engine and CWL tools. Command line to run the LOH workflow locally is:
+It is recommended to run this CWL workflow on a system with a high number of CPUs and memory (>=16 GB). The basic requirement is a running docker engine and CWL tools. Command line to run the AlleleCouNT workflow locally is:
 
 ```
 cwltool workflow/run_LOH_app.cwl sample_input.yml

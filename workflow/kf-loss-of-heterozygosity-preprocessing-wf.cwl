@@ -3,13 +3,13 @@
 cwlVersion: v1.2
 class: Workflow
 id: kf-loss-of-heterozygosity-preprocessing
-label: Kids First Loss of Heterozygosity
+label: Kids First AlleleCouNT
 doc: | 
- # Kids First Loss of Heterozygosity (LOH)
+ # Kids First Allele Counter (AlleleCouNT)
 
   ![data service logo](https://github.com/d3b-center/d3b-research-workflows/raw/master/doc/kfdrc-logo-sm.png)
 
-  The Kids First Loss of Heterozygosity Preprocessing (aka LOH) is a CWL workflow that assesses the loss of heterozygosity in the tumor for rare germline calls filtered by gnomad_3_1_1_AF_popmax (typically < 0.01) or when gnomad_3_1_1_AF_popmax is not defined. This preprocessing is designed to compute variant allele frequency (VAF) for multiple proband tumor samples and can also map germline VAF for family trios if trio germline VCF file is provided.
+  The Kids First Allele Counter (aka AlleleCouNT) is a CWL workflow that assesses allele depth in normal and tumor DNA sequencing data across rare germline calls filtered by gnomad_3_1_1_AF_popmax (typically < 0.01). This preprocessing is designed to compute variant allele frequency (VAF) for proband germline and tumor samples and can also map germline VAF for family trios if trio germline VCF file is provided.
   
   #### Basic info
   - Dockerfile: https://github.com/d3b-center/bixtools/tree/master/LOH/1.0.1
@@ -19,7 +19,7 @@ doc: |
 
   ### Description
 
-  The Kids First Loss of Heterozygosity application is divided into two tools: Germline tool and Tumor tool.
+  The Kids First AlleleCouNT application is divided into two tools: Germline tool and Tumor tool.
 
   #### Germline Tool
 
@@ -28,7 +28,7 @@ doc: |
   #### Tumor Tool
   Tumor tool search in paired proband tumor sample for aligned reads in the regions where rare variants from the germline tool exists and exact allele/reference count, allele/reference depth and calculate the variant allele frequency VAF. Tumor tool have the capability to search multiple tumor samples for proband and if applicable, parental and maternal tumor samples. To exact reads from the bam/cram files, this tool utilizes [bam-readcount](https://github.com/genome/bam-readcount) and wraps it with python script to shape the output in a tabular format. 
 
-  ### LOH Inputs
+  ### AlleleCouNT Inputs
   ```
   Germline tool
     # Required  
@@ -51,9 +51,9 @@ doc: |
     minCore: { type: 'int?', default: 16, doc: "Minimum number of cores for tumor tool based on the number cram/bam inputs" }
   ```
 
-  ### LOH Output
+  ### AlleleCouNT Output
 
-  LOH application will output a tab-separated values file mapped data from germline tool and tumor tool. 
+  AlleleCouNT application will output a tab-separated values file mapped data from germline tool and tumor tool. 
   ```
   output_file: { type: File, doc: A tsv file with gathered data from germline and tumor tool}
   ```
